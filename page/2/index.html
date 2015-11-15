@@ -103,87 +103,6 @@
           
           
             
-              <a class="post-title-link" href="/2015/08/08/async源码解析/">
-                async源码解析
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-          <span class="post-time">
-            
-              发表于 2015-08-08
-            
-          </span>
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/08/08/async源码解析/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/08/async源码解析/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </div>
-
-    
-      <div class="post-body">
-
-        
-        
-
-        
-          
-            <h2 id="前言">前言</h2><p>异步是javascript一个标志，尤其在nodejs中，操作数据库等往往带来大量的异步调用，所谓的“callback hell”由此而来，async作为成名较早的异步流程库，API设计属于异步1.0时代，其思想非常接近主流思考方向，源码必然很有参考价值，于是找时间看了一下其源码中的几个主要方法。</p>
-            <div class="post-more-link text-center">
-              <a class="btn" href="/2015/08/08/async源码解析/#more">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-        
-      </div>
-    
-
-    
-      <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/源码/">
-                #源码
-              </a>
-            
-          </div>
-        
-
-        
-
-        
-        
-          <div class="post-eof"></div>
-        
-      </div>
-    
-  </div>
-
-
-  
-    
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
               <a class="post-title-link" href="/2015/08/07/dom兼容性问题收集/">
                 dom兼容性问题收集
               </a>
@@ -516,6 +435,122 @@ var h = window.innerHeight
 
 
   
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/04/16/javascript兼容性/">
+                javascript兼容性
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-04-16
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/04/16/javascript兼容性/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/04/16/javascript兼容性/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <h3 id="ecmascipt">ecmascipt</h3><ul>
+<li><p><strong>IE6-8</strong> 函数声明和函数表达式</p>
+<ul>
+<li><strong>ie6-8</strong>函数名标识符里面可以有 <code>.</code> , 标准浏览器会报错,如下代码片段一</li>
+<li><strong>ie6-8</strong>函数表达式标识符key被外部访问，标准浏览器只能用于内部访问，如下代码片段二<br><pre><br>//标准报错<br>function A(){}<br>function A.prototype.b(){}<br>var a=new A();<br>alert(typeof a.b);</pre></li>
+</ul>
+<p>//ie6-8能取到，标准浏览器不行<br>var a=function b(){};<br>alert(typeof b);<br></p>
+<p><strong>解决方法</strong>：不要使用带<code>.</code>的函数名标识符，函数表达式标识符不要作为引用的目的出现，出现在标识错误匿名函数等。</p>
+</li>
+<li><p><strong>Firefox对条件语句块内部函数声明处理有差异</strong> </p>
+<pre>
+//其它浏览器不管 true或者false，都是2，firefox是1
+//规范定义是函数声明之后出现在全局环境或者函数体里面，在判断块里面当作是在函数里面，所以后面的会覆盖前面的
+function foo(){
+if(true){
+  function bar(){alert(1);}
+}
+else{
+  function bar(){alert(2);}
+}
+bar();
+foo();
+</pre>
+</li>
+<li><p><strong>各浏览器中 Date 对象的 getYear 方法的返回值不一致</strong><br>根据规范，这个方法将返回当前时间的年份值与 1900 的差值，如 1800 年返回 -100，2010 返回 110。但 IE 仅在一个 1900 - 1999 年之间的日期值上调用 getYear 方法时，减去 1900，在其他的日期中返回的是实际的年份，就和 getFullYear 一样。<br><strong>解决办法</strong><br>使用Date.prototype.getFullYear() 代替</p>
+</li>
+<li><strong>ie6-8</strong>不支持JSON对象及其方法</li>
+<li><strong>Chrome Opera 中 for-in 语句遍历出对象属性的顺序与定义的不同</strong>，不要依赖key的排序</li>
+<li><strong>IE6-8</strong>不能在 JSON 字符串或对象直接量的最后一个键值对后加 ‘,’</li>
+<li><strong>IE6</strong>不能使用下标来访问字符串</li>
+<li><a href="http://w3help.org/zh-cn/causes/SJ5003" target="_blank" rel="external">各浏览器中用 for in 可以遍历对象中被更新的内置方法存在差异</a></li>
+<li><a href="http://w3help.org/zh-cn/causes/SJ2007" target="_blank" rel="external">IE6，IE7，IE8不会忽略数组直接量的末尾空元素</a></li>
+<li><a href="http://w3help.org/zh-cn/causes/" target="_blank" rel="external">元素的内联事件处理函数的特殊作用域在各浏览器中存在差异</a></li>
+<li><a href="http://w3help.org/zh-cn/causes/SJ9013" target="_blank" rel="external">Array.prototype.sort当使用了 comparefn 后返回值不为 -1、0、1时，各引擎实现排序结果不一致</a></li>
+</ul>
+<p>##dom</p>
+<ul>
+<li>IE6 IE7 IE8(Q) 中的 getElementById 方法的参数不区分大小写</li>
+<li>IE 在创建 DOM 树时会忽略某些空白字符</li>
+</ul>
+
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/兼容性/">
+                #兼容性
+              </a>
+            
+          </div>
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
 
           </div>
 
@@ -548,7 +583,7 @@ var h = window.innerHeight
       <p class="site-description motion-element"></p>
       <div class="site-state motion-element">
         <div class="site-state-item site-state-posts">
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </div>
         <div class="site-state-item site-state-tags">
