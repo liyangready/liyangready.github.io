@@ -1,0 +1,1013 @@
+<!doctype html>
+<html class="theme-next use-motion">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.3.0rc5"/>
+
+
+
+
+	<meta name="keywords" content="前端工程," />
+
+  <title> 前端工程构建之gulp // liyangready's blog </title>
+</head>
+
+<body>
+  <div class="container one-column page-post-detail">
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+    <a href="/" class="brand">
+        <span class="logo">
+          <i class="icon-logo"></i>
+        </span>
+        <span class="site-title">liyangready's blog</span>
+    </a>
+</h1>
+
+
+  <ul id="menu" class="menu">
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/" class="menu-link">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives" class="menu-link">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags" class="menu-link">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+            
+          
+
+          <div id="posts" class="posts-expand">
+            
+  
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              前端工程构建之gulp
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-03-17
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/03/17/前端工程构建之gulp/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/03/17/前端工程构建之gulp/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          <p>#前面的废话<br>一直在思考前端工程师的价值体现在哪里，或者说优秀前端工程师的竞争力在哪里？</p>
+<ul>
+<li>小公司喜欢什么样的人？<ul>
+<li>能快速搞出东西来的人，使用各种工具、插件，分分钟起页面，切图切个三四天？怎么可能！管你什么ie6，能出东西就行了，最好再适应个移动端。。。</li>
+</ul>
+</li>
+<li>大公司喜欢什么样的人？<ul>
+<li>能写出可维护代码</li>
+<li>基本功扎实</li>
+<li>能够搞定ie6</li>
+<li><em>工程化/结构化/模块化，解决大规模前端代码问题</em></li>
+</ul>
+</li>
+</ul>
+<p>很不巧，gulp这种东西，对于小公司能快速起页面，对于大公司能承担起工程化代码的作用，不得不用啊。当然各个逼格高一点的公司都会用自己的类gulp工具，比如百度的fis，我司的fekit等等，但是实际上从社区的角度来说，肯定无法与gulp比拟，在个人开发的时候，还是要选择gulp。</p>
+<p>#grunt VS gulp<br>可以看这篇文章<a href="http://www.f2e.im/t/394" target="_blank" rel="external">Gulp vs Grunt</a></p>
+<p>#start<br><a id="more"></a><br>gulp是典型的极简主义，导致其官方get start什么都没有。。。</p>
+<ul>
+<li>1 全局安装<pre>npm install --global gulp</pre></li>
+<li>2 在你的开发环境安装gulp<pre>npm install --save-dev gulp
+//这一步不能省，全局安装的gulp类似于一个命令行工具，在具体的业务中还需要引进gulp module
+</pre></li>
+<li><p>3 创建一个叫 gulpfile.js 的文件，内容如下</p>
+<pre>
+var gulp = require('gulp');
+gulp.task('default', function() {
+// place code for your default task here
+});
+</pre>
+</li>
+<li><p>4 执行 gulp 命令</p>
+<p>一个简单的应用就这么结束了，实际上 ，几乎所有应用都是这个套路。 gulp用起来就和写代码一样，你把需要的插件引进来，写进task，顺序执行就ok了。</p>
+</li>
+</ul>
+<h1 id="gulp_API">gulp API</h1><ul>
+<li>gulp API设计也非常简单，就下面几个</li>
+</ul>
+<p>##<strong>gulp.src(globs[,options])</strong></p>
+<pre>
+gulp.src('client/templates/*.jade')
+  .pipe(jade())
+  .pipe(minify())
+  .pipe(gulp.dest('build/minified_templates'));
+</pre>
+
+<p>src可以使用通配符匹配一个或多个，对于参数gulp是使用了开源的 <em>glob</em> 来完成： <a href="https://github.com/isaacs/node-glob" target="_blank" rel="external">node-glob</a><br>返回值是一种格式的流<a href="https://github.com/wearefractal/vinyl-fs" target="_blank" rel="external">Vinyl files</a>也开源了，感兴趣的可以了解一下，返回值就可以被pipe方法操作操作。</p>
+<h2 id="gulp-dest(path[,options])"><strong>gulp.dest(path[,options])</strong></h2><pre>
+gulp.src('./client/templates/*.jade')
+  .pipe(jade())
+  .pipe(gulp.dest('./build/templates'))
+  .pipe(minify())
+  .pipe(gulp.dest('./build/minified_templates'));
+</pre>
+
+<p>看名字就知道，他和src是反的，类似于写的感觉，作为输出，可以输出到不同的文件夹，如果文件夹不存在就会建立新的文件夹。可以输出多个文件。</p>
+<h2 id="gulp-task(name[,deps],_fn)"><strong>gulp.task(name[,deps], fn)</strong></h2><pre>
+gulp.task('somename', function() {
+  // Do stuff
+});
+</pre>
+
+<p>其中deps参数是一个数组，作为在你要执行的任务之前要执行的任务队列，它会先执行完数组里面的任务队列，再来执行你的任务。</p>
+<p>同时，task可以支持异步，如果回调函数存在下面三种用法，就会实现异步：</p>
+<p><strong>接受一个回调函数</strong></p>
+<pre>
+// run a command in a shell
+var exec = require('child_process').exec;
+gulp.task('jekyll', function(cb) {
+  // build Jekyll
+  exec('jekyll build', function(err) {
+    if (err) return cb(err); // return error
+    cb(); // finished task
+  });
+});
+</pre>
+
+<p><strong>返回了一个流</strong></p>
+<pre>
+gulp.task('somename', function() {
+  var stream = gulp.src('client/**/*.js')
+    .pipe(minify())
+    .pipe(gulp.dest('build'));
+  return stream;
+});
+</pre>
+
+<p><strong>返回一个promise对象</strong></p>
+<pre>
+var Q = require('q');
+
+gulp.task('somename', function() {
+  var deferred = Q.defer();
+
+  // do async stuff
+  setTimeout(function() {
+    deferred.resolve();
+  }, 1);
+
+  return deferred.promise;
+});
+</pre>
+
+<p>上述是官方文档的描述，我们理解一下这几句话，什么叫可以是异步的？</p>
+<p>跑下面这一段代码：</p>
+<pre>
+var gulp = require('gulp');
+
+gulp.task('test1' , function() {
+    setTimeout(function(){
+        console.log("test1 finish");
+    },1000);
+});
+
+gulp.task('test2',function() {
+    setTimeout(function(){
+        console.log("test2 finish");
+    },500);
+});
+
+gulp.task('default', ['test1','test2']);
+</pre>
+
+<p>执行gulp，控制台输出：</p>
+<pre>
+[19:19:12] Starting 'test1'...
+[19:19:12] Finished 'test1' after 438 μs
+[19:19:12] Starting 'test2'...
+[19:19:12] Finished 'test2' after 86 μs
+[19:19:12] Starting 'default'...
+[19:19:12] Finished 'default' after 8.21 μs
+test2 finish
+test1 finish
+</pre>
+
+<p>可以发现gulp默认是按顺序执行你的任务，但是它 <strong>不会等待</strong> ，test1虽然其实要在1s钟之后才会完毕，但是它按同步顺序执行，很快就结束了，然后开始test2，同样很快就结束了。<br>我们按上面的方法加入最简单的回调：</p>
+<pre>
+var gulp = require('gulp');
+
+gulp.task('test1' , function() {
+    setTimeout(function(){
+        console.log("test1 finish");
+    },1000);
+    cb();
+});
+
+gulp.task('test2',function() {
+    setTimeout(function(){
+        console.log("test2 finish");
+    },500);
+});
+
+gulp.task('default', ['test1','test2']);
+</pre>
+
+<p></p>
+<pre>
+[19:22:35] Starting 'test1'...
+[19:22:35] Starting 'test2'...
+[19:22:35] Finished 'test2' after 151 μs
+test2 finish
+test1 finish
+[19:22:36] Finished 'test1' after 1.01 s
+[19:22:36] Starting 'default'...
+[19:22:36] Finished 'default' after 11 μs
+</pre>
+可以发现，控制台结果 test2 finish 和 test1 finish虽然没有变化，但是对于 **gulp** 来说，test1这个task是在1000ms之后才完成的，test2没有设置异步，所以很快完成。
+
+有人会说了，这尼玛有啥用啊，反正task1和task2都会执行，而且执行顺序也不受影响。
+是的，在上面这个例子中，你不期望task1和task2的顺序，的确不用callback去告诉gulp他们正确的执行顺序，假如你希望task1执行完了再执行task2，我们试下面这段代码。
+
+<pre>
+var gulp = require('gulp');
+
+gulp.task('test1' , function() {
+    setTimeout(function(){
+        console.log("test1 finish");
+    },1000);
+});
+
+gulp.task('test2',['test1'],function() {
+    setTimeout(function(){
+        console.log("test2 finish");
+    },500);
+});
+
+gulp.task('default', ['test1','test2']);
+</pre>
+
+<p>看console：</p>
+<pre>
+[19:28:38] Starting 'test1'...
+[19:28:38] Finished 'test1' after 592 μs
+[19:28:38] Starting 'test2'...
+[19:28:38] Finished 'test2' after 179 μs
+[19:28:38] Starting 'default'...
+[19:28:38] Finished 'default' after 8.21 μs
+test2 finish
+test1 finish
+</pre>
+坑爹了，我们按照官方定义的，给task2多传了一个参数告诉task2要在task1执行之后再去执行task1,没有问题，但是问题是test2 finish先输出，显然不对！
+这就是因为你没有告诉gulp task1是异步的，不是马上就结束了，它不知道，然后傻叉的以为task1马上结束了，按你的吩咐去执行了task2，肯定不对撒，cb/stream/promise 就用在这儿，看我小改一下：
+<pre>
+var gulp = require('gulp');
+
+gulp.task('test1' , function(cb) {
+    setTimeout(function(){
+        console.log("test1 finish");
+        cb();
+    },1000);
+});
+
+gulp.task('test2',['test1'],function() {
+    setTimeout(function(){
+        console.log("test2 finish");
+    },500);
+});
+
+gulp.task('default', ['test1','test2']);
+</pre>
+看console：
+<pre>
+[19:33:21] Starting 'test1'...
+test1 finish
+[19:33:22] Finished 'test1' after 1.01 s
+[19:33:22] Starting 'test2'...
+[19:33:22] Finished 'test2' after 109 μs
+[19:33:22] Starting 'default'...
+[19:33:22] Finished 'default' after 9.03 μs
+test2 finish
+</pre>
+
+<p>果然完美了，说了要相信科学       </p>
+<p><strong>从上面的例子可以看出来，当你需要顺序执行几个task的时候，第一，你需要在task2的参数上面声明需要先于它执行的task1，而且，如果task1是异步的，一定要记得告诉gulp，task1什么时候执行结束！</strong></p>
+<p>##gulp.watch</p>
+<p>gulp.watch(glob [, opts], tasks) or gulp.watch(glob [, opts, cb])</p>
+<p>watch就是典型的hook，很好理解，当某个/些文件变动时，去执行某些命令或者执行回调:</p>
+<pre>
+task用法
+var watcher = gulp.watch('js/**/*.js', ['uglify','reload']);
+watcher.on('change', function(event) {
+  console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+});
+cb用法：
+gulp.watch('js/**/*.js', function(event) {
+  console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+});
+</pre>
+
+<p>很好理解就不解释了。</p>
+<p>#结语<br>gulp很好很强大，上述只是官网的翻译，下一篇来一个完整的例子，gulp实战~~~</p>
+
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/前端工程/">
+                #前端工程
+              </a>
+            
+          </div>
+        
+
+        
+          <div class="post-nav">
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2015/03/27/jQuery源码系列（一）/">jQuery源码系列（一）</a>
+              
+            </div>
+
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2015/03/15/把书看薄-javascript模式/">把书看薄-javascript模式</a>
+              
+            </div>
+          </div>
+        
+
+        
+        
+      </div>
+    
+  </div>
+
+
+
+  
+    <div class="comments" id="comments">
+      
+        <div class="ds-thread" data-thread-key="2015/03/17/前端工程构建之gulp/"
+             data-title="前端工程构建之gulp" data-url="http://liyangready.github.io/2015/03/17/前端工程构建之gulp/">
+        </div>
+
+      
+    </div>
+  
+
+          </div>
+
+          
+        </div>
+
+        
+<div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+    
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview">
+          站点概览
+        </li>
+      </ul>
+    
+
+    <div class="site-overview">
+      <div class="site-author motion-element">
+        <img class="site-author-image" src="/images/default_avatar.jpg" alt="leon.li" />
+        <p class="site-author-name">leon.li</p>
+      </div>
+      <p class="site-description motion-element"></p>
+      <div class="site-state motion-element">
+        <div class="site-state-item site-state-posts">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </div>
+        <div class="site-state-item site-state-tags">
+            <span class="site-state-item-count">10</span>
+            <span class="site-state-item-name">标签</span>
+        </div>
+        <div class="site-state-item site-state-pages">
+            <span class="site-state-item-count">1</span>
+            <span class="site-state-item-name">页面</span>
+        </div>
+      </div>
+
+      
+
+      <div class="social-info motion-element">
+        
+      </div>
+
+    </div>
+
+    
+      <div class="post-toc sidebar-panel-active">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gulp_API"><span class="nav-number">1.</span> <span class="nav-text">gulp API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#gulp-dest(path[,options])"><span class="nav-number">1.1.</span> <span class="nav-text">gulp.dest(path[,options])</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gulp-task(name[,deps],_fn)"><span class="nav-number">1.2.</span> <span class="nav-text">gulp.task(name[,deps], fn)</span></a></li></ol></li></ol>
+      </div>
+    
+  </div>
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2015
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">leon.li</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 - <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT</a>
+</div>
+
+
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".fancybox").fancybox();
+    });
+  </script>
+
+  <script type="text/javascript">
+  function hasMobileUA () {
+    var nav = window.navigator;
+    var ua = nav.userAgent;
+    var pa = /iPad|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g;
+
+    return pa.test(ua);
+  }
+
+  function isDesktop () {
+    return screen.width > 991 && !hasMobileUA();
+  }
+
+  function isTablet () {
+    return screen.width < 992 && screen.width > 767 && hasMobileUA();
+  }
+
+  function isMobile () {
+    return screen.width < 767 && hasMobileUA();
+  }
+
+  function escapeSelector (selector) {
+    return selector.replace(/[!"$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+  }
+</script>
+
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  
+
+  <script type="text/javascript" id="motion.global">
+  $(document).ready(function () {
+    var body = $('body');
+    var isSidebarVisible = false;
+    var sidebarToggle = $('.sidebar-toggle');
+    var sidebarToggleLine1st = $('.sidebar-toggle-line-first')
+    var sidebarToggleLine2nd = $('.sidebar-toggle-line-middle');
+    var sidebarToggleLine3rd = $('.sidebar-toggle-line-last');
+    var sidebar = $('.sidebar');
+
+    var SIDEBAR_WIDTH = '320px';
+    var SIDEBAR_DISPLAY_DURATION = 300;
+
+    var sidebarToogleLineStatusInit = {width: '100%', opacity: 1, left: 0, rotateZ: 0, top: 0};
+
+    var sidebarToggleLine1stStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine1stStatusArrow = {width: '50%', rotateZ: '-45deg', top: '2px'};
+    var sidebarToogleLine1stStatusClose = {width: '100%', rotateZ: '-45deg', top: '5px'};
+
+    var sidebarToggleLine2ndStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine2ndStatusArrow = {width: '90%'};
+    var sidebarToogleLine2ndStatusClose = {opacity: 0};
+
+    var sidebarToggleLine3rdStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine3rdStatusArrow = {width: '50%', rotateZ: '45deg', top: '-2px'};
+    var sidebarToogleLine3rdStatusClose = {width: '100%', rotateZ: '45deg', top: '-5px'};
+
+    sidebatToggleMotion();
+    postsListMotion();
+    backToTopMotion();
+
+
+    $(document)
+      .on('sidebar.isShowing', function () {
+        isDesktop() && body.velocity(
+          {paddingRight: SIDEBAR_WIDTH},
+          SIDEBAR_DISPLAY_DURATION
+        );
+        sidebarContentMotion();
+      })
+      .on('sidebar.isHiding', function () {});
+
+
+    function backToTopMotion () {
+      var b2top = $('.back-to-top');
+      b2top.on('click', function () {
+        body.velocity('scroll');
+      });
+    }
+
+    function sidebarShowMotion () {
+
+      sidebarToggleLine1st.velocity(sidebarToogleLine1stStatusClose);
+      sidebarToggleLine2nd.velocity(sidebarToogleLine2ndStatusClose);
+      sidebarToggleLine3rd.velocity(sidebarToogleLine3rdStatusClose);
+
+      sidebar.velocity({width: SIDEBAR_WIDTH}, {
+        duration: SIDEBAR_DISPLAY_DURATION,
+        complete: function () {
+          sidebar.addClass('sidebar-active');
+          sidebar.trigger('sidebar.didShow');
+        }
+      });
+      sidebar.trigger('sidebar.isShowing');
+    }
+
+    function sidebarHideMotion () {
+      isDesktop() && body.velocity({paddingRight: 0});
+      sidebar.velocity('reverse');
+
+      sidebarToggleLine1st.velocity(sidebarToggleLine1stStatusInit);
+      sidebarToggleLine2nd.velocity(sidebarToggleLine2ndStatusInit);
+      sidebarToggleLine3rd.velocity(sidebarToggleLine3rdStatusInit);
+
+      sidebar.removeClass('sidebar-active');
+      sidebar.trigger('sidebar.isHiding');
+    };
+
+    function sidebarContentMotion () {
+      $('.sidebar .motion-element').velocity(
+        'transition.slideRightIn',
+        {stagger: 50, drag: true}
+      );
+    }
+
+    function postsListMotion () {
+      $('.post').velocity('transition.slideDownIn', {stagger: 300, drag: true});
+    }
+
+    function sidebatToggleMotion () {
+      sidebarToggle.on('click', function () {
+        isSidebarVisible ? sidebarHideMotion() : sidebarShowMotion();
+        isSidebarVisible = !isSidebarVisible;
+      });
+
+      sidebarToggle.hover(function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusArrow);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusArrow);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusArrow);
+      }, function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusInit);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusInit);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusInit);
+      });
+    }
+  });
+
+</script>
+
+
+
+
+
+  
+  
+<script type="text/javascript" id="bootstrap.scrollspy.custom">
+  /* ========================================================================
+  * Bootstrap: scrollspy.js v3.3.2
+  * http://getbootstrap.com/javascript/#scrollspy
+  * ========================================================================
+  * Copyright 2011-2015 Twitter, Inc.
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+  * ======================================================================== */
+
+  /**
+   * Custom by iissnan
+   *
+   * - Add a `clear.bs.scrollspy` event.
+   * - Esacpe targets selector.
+   */
+
+
+  +function ($) {
+    'use strict';
+
+    // SCROLLSPY CLASS DEFINITION
+    // ==========================
+
+    function ScrollSpy(element, options) {
+      this.$body          = $(document.body)
+      this.$scrollElement = $(element).is(document.body) ? $(window) : $(element)
+      this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
+      this.selector       = (this.options.target || '') + ' .nav li > a'
+      this.offsets        = []
+      this.targets        = []
+      this.activeTarget   = null
+      this.scrollHeight   = 0
+
+      this.$scrollElement.on('scroll.bs.scrollspy', $.proxy(this.process, this))
+      this.refresh()
+      this.process()
+    }
+
+    ScrollSpy.VERSION  = '3.3.2'
+
+    ScrollSpy.DEFAULTS = {
+      offset: 10
+    }
+
+    ScrollSpy.prototype.getScrollHeight = function () {
+      return this.$scrollElement[0].scrollHeight || Math.max(this.$body[0].scrollHeight, document.documentElement.scrollHeight)
+    }
+
+    ScrollSpy.prototype.refresh = function () {
+      var that          = this
+      var offsetMethod  = 'offset'
+      var offsetBase    = 0
+
+      this.offsets      = []
+      this.targets      = []
+      this.scrollHeight = this.getScrollHeight()
+
+      if (!$.isWindow(this.$scrollElement[0])) {
+        offsetMethod = 'position'
+        offsetBase   = this.$scrollElement.scrollTop()
+      }
+
+      this.$body
+        .find(this.selector)
+        .map(function () {
+          var $el   = $(this)
+          var href  = $el.data('target') || $el.attr('href')
+          var $href = /^#./.test(href) && $(escapeSelector(href)) // Need to escape selector.
+
+          return ($href
+            && $href.length
+            && $href.is(':visible')
+            && [[$href[offsetMethod]().top + offsetBase, href]]) || null
+        })
+        .sort(function (a, b) { return a[0] - b[0] })
+        .each(function () {
+          that.offsets.push(this[0])
+          that.targets.push(this[1])
+        })
+
+
+    }
+
+    ScrollSpy.prototype.process = function () {
+      var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
+      var scrollHeight = this.getScrollHeight()
+      var maxScroll    = this.options.offset + scrollHeight - this.$scrollElement.height()
+      var offsets      = this.offsets
+      var targets      = this.targets
+      var activeTarget = this.activeTarget
+      var i
+
+      if (this.scrollHeight != scrollHeight) {
+        this.refresh()
+      }
+
+      if (scrollTop >= maxScroll) {
+        return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
+      }
+
+      if (activeTarget && scrollTop < offsets[0]) {
+        $(this.selector).trigger('clear.bs.scrollspy')  // Add a custom event.
+        this.activeTarget = null
+        return this.clear()
+      }
+
+      for (i = offsets.length; i--;) {
+        activeTarget != targets[i]
+          && scrollTop >= offsets[i]
+          && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
+          && this.activate(targets[i])
+      }
+    }
+
+    ScrollSpy.prototype.activate = function (target) {
+      this.activeTarget = target
+
+      this.clear()
+
+      var selector = this.selector +
+        '[data-target="' + target + '"],' +
+        this.selector + '[href="' + target + '"]'
+
+      var active = $(selector)
+        .parents('li')
+        .addClass('active')
+
+      if (active.parent('.dropdown-menu').length) {
+        active = active
+          .closest('li.dropdown')
+          .addClass('active')
+      }
+
+      active.trigger('activate.bs.scrollspy')
+    }
+
+    ScrollSpy.prototype.clear = function () {
+      $(this.selector)
+        .parentsUntil(this.options.target, '.active')
+        .removeClass('active')
+    }
+
+
+    // SCROLLSPY PLUGIN DEFINITION
+    // ===========================
+
+    function Plugin(option) {
+      return this.each(function () {
+        var $this   = $(this)
+        var data    = $this.data('bs.scrollspy')
+        var options = typeof option == 'object' && option
+
+        if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
+        if (typeof option == 'string') data[option]()
+      })
+    }
+
+    var old = $.fn.scrollspy
+
+    $.fn.scrollspy             = Plugin
+    $.fn.scrollspy.Constructor = ScrollSpy
+
+
+    // SCROLLSPY NO CONFLICT
+    // =====================
+
+    $.fn.scrollspy.noConflict = function () {
+      $.fn.scrollspy = old
+      return this
+    }
+
+
+    // SCROLLSPY DATA-API
+    // ==================
+
+    $(window).on('load.bs.scrollspy.data-api', function () {
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this)
+        Plugin.call($spy, $spy.data())
+      })
+    })
+
+  }(jQuery);
+</script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      $tocSelector.scrollPager({
+        max: getTOCMaxHeight()
+      });
+    }
+
+    function getTOCMaxHeight () {
+      // TODO: Make it beautiful
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+        parseInt($sidebarInner.css('padding-top'), 10) -
+        parseInt($sidebarInner.css('padding-bottom'), 10) -
+        $('.sidebar-nav').height() -
+        parseInt($tocSelector.css('margin-top'), 10) -
+        parseInt($tocSelector.css('margin-bottom'), 10);
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+      });
+    }
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      if ($('.post-toc').html().trim().length > 0 && isDesktop()) {
+        setTimeout(function () {
+          $('.sidebar-toggle').trigger('click');
+        }, 800);
+      }
+    });
+  </script>
+
+
+
+
+  
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"liyangready"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+  
+</body>
+</html>

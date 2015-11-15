@@ -1,0 +1,947 @@
+<!doctype html>
+<html class="theme-next use-motion">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.3.0rc5"/>
+
+
+
+
+	<meta name="keywords" content="读书笔记," />
+
+  <title> 把书看薄-javascript模式 // liyangready's blog </title>
+</head>
+
+<body>
+  <div class="container one-column page-post-detail">
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+    <a href="/" class="brand">
+        <span class="logo">
+          <i class="icon-logo"></i>
+        </span>
+        <span class="site-title">liyangready's blog</span>
+    </a>
+</h1>
+
+
+  <ul id="menu" class="menu">
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/" class="menu-link">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives" class="menu-link">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags" class="menu-link">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+            
+          
+
+          <div id="posts" class="posts-expand">
+            
+  
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              把书看薄-javascript模式
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-03-15
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/03/15/把书看薄-javascript模式/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/03/15/把书看薄-javascript模式/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          <p>#模式<br>我理解的模式是一种解决方案，用来更好的解决某类问题。也可以认为是最佳实践的一种体现。</p>
+<p>#javascript模式<br>在软件行业，由于抽象的原因，模式多于面向对象挂钩，虽然javascript不是一门纯正面向对象的语言，但是它有原型链，有<em>一等公民</em> 函数，有object对象，融在一起，完全可以实现面向对象。这也是这本书所探讨的话题。<br><em>在没有说明的情况下，都是ES3的内容</em><br><a id="more"></a></p>
+<p>##第一章 简介<br>简单地介绍，js基础好的人可以直接跳过</p>
+<p>##第二章 基本技巧</p>
+<ul>
+<li><p>全局变量</p>
+<ul>
+<li>注意全局变量带来的弊端，这个话题就不用过多讨论了，全局变量在有了模式、命名空间之后是被抛弃的东西。</li>
+<li>下面这种形式要引起注意<br><code>var a = b = 0;//b会被放在全局变量下，因为优先级的问题，这句话可以简单解释为：var a; window.b = 0; a = b;</code></li>
+<li>通过var 定义的全局变量不可被delete掉，而未通过var定义的可以，当然，未通过var定义的在ES5严格模式会报错，<em>不被推荐</em>。</li>
+</ul>
+</li>
+<li><p>for循环</p>
+<ul>
+<li>普通for循环应该把数组长度缓存，以免每次判断的时候都需要取一次数组长度，这对于性能的提升很有帮助。</li>
+<li>i–比i++更受推荐，因为同0比较比同数组程度更有效率。</li>
+</ul>
+</li>
+<li>for in循环<ul>
+<li>需要注意的就是for in循环的时候会把原型链里面的属性带出来，如果for in的对象是一个实例，而且你不希望把它原型链中的数据带出来，就需要用 <em>hasOwnProperty</em>来过滤。</li>
+</ul>
+</li>
+<li>推荐使用 <em>===</em> 来增加代码的健壮性</li>
+<li>eval是不推荐的，尤其是ajax回json用eval去执行不对格式校验会有安全隐患。实在是要使用eval也推荐用new Function();因为他有自己的作用域。</li>
+<li>parseInt后面必须带上第二个参数，因为解析<em>“07”</em>之类的不指定进制会导致解析成8进制。</li>
+</ul>
+<p>##第三章 字面量和构造函数</p>
+<ul>
+<li>不使用new Object()和new Array()来创建对象/数组，比如new Array带来的问题：<br><pre><br>new Array[3]//[undefined,undefined,undefined];<br>new Array[3.14]//error</pre></li>
+</ul>
+<p>     </p>
+<ul>
+<li>检测数组：<ul>
+<li>Array.isArray();//ECAMAScript 5;</li>
+<li>Object.prototype.toString.call([]) === “[object Array]”;</li>
+</ul>
+</li>
+</ul>
+<h2 id="第四章_函数">第四章 函数</h2><ul>
+<li>函数表达式其实也可以给函数命名。如：<br><pre>var a = function b(){};</pre>这种做法的好处就是，a对应的不是一个匿名函数，在函数内部可以取到函数名（对于匿名函数报错的提示也有好处，可以定位到函数名），当然取和<em>a</em>不一样的函数名比如上面的<em>b</em>是不推荐的，因为其在ie下面实现得有问题。</li>
+<li><p>初始化时分支（Init-time branching）</p>
+<ul>
+<li>这种模式是一种优化模式，当知道某个条件在整个程序生命周期内都不会发生改变时，仅对该条件测试一次是很有意义的。如：<br><pre> var utils = {};<br>if(window.addEventListener) {<br>utils.addListener = function(el, type, fn) {<br>   el.addEventListener(type, fn, false);<br>}<br>}<br>else {<br>utils.addListener = function(el, type, fn) {<br>   el.attachEvent(‘on’ + type, fn);<br>}<br>}<br></pre>上述做法的好处就是只需要初始化一次之后不需要再次判断当前浏览器执行环境。</li>
+</ul>
+</li>
+<li><p>备忘模式</p>
+<ul>
+<li>其实就是通过缓存函数结果，让重复调用的函数从缓存读结果来提升性能，没啥好说的。</li>
+</ul>
+</li>
+<li>curry化函数<ul>
+<li>curry话是指部分调用函数返回新函数的现象，比如著名的add(5,4)和add(5)(4)，直接上通用的curry化方法:<pre>
+function curry(fn) {
+   var storeArgs = Array.prototype.slice(arguments); //缓存调用参数
+   return function() {
+       var newArgs = storeArgs.concat(Array.prototype.slice(arguments));
+       return fn.apply(null,args); 
+   } 
+}
+function add(a, b, c, d, e) {
+     return a + b + c + d + e;    
+}
+curry(add ,1 , 2)(3, 4, 5);
+</pre>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>##第五章 对象创建模式</p>
+<ul>
+<li>通过命名空间函数<ul>
+<li>大意就是通过 对象字面量 {} 来管理全局变量</li>
+<li>这里有一种写法是<pre>
+  var obj = obj || {}; //如果没有obj再创建新的命名空间
+  //这是一个很常见的写法，只不过看到这个代码，突然想起比如已经有了obj = 1;
+  //那么下面这个 var obj; 会不会让obj = undefined;影响后面的取值？
+  //上述代码应该可以拆分成： var obj; obj = obj || {}; 
+  //obj会受var的影响吗？看下面两段代码
+  var obj = 1; var obj; console.log(obj);//1
+  var obj = 1; var obj = undefined; console.log(obj);//undefined
+    //可以看出 var obj;和 var obj = undefined;还是有区别的，区别就是后者有显示的赋值过程
+  //在ES3规范中， 代码执行前会有初始化上下文和变量实例化两个过程，虽然在变量实例化时候var obj;会被默认赋上undefined，但是执行代码var obj = 1；变量obj值为1，下面一句var obj在执行的时候会被直接跳过，所以不影响后面的obj的值。
+</pre></li>
+</ul>
+</li>
+<li>私有成员<ul>
+<li>通过闭包来实现私有成员</li>
+</ul>
+</li>
+<li>将私有方法揭示为公有方法<ul>
+<li>说白了就是备份一个方法，防止一个方法挂了导致全部都不能用了。</li>
+</ul>
+</li>
+<li>模块化<ul>
+<li>最早的模块化概念，类似YUI，var a.b = (function(){return {xx:xx}})(),只将一个模块API暴露出来。</li>
+<li>沙箱模式，用于解决越来越长的命名空间，不再依赖全局变量，而是提供一个沙箱环境，用于执行各个模块，但是又不会相互影响，其实是commonJS这种东西的另一种实现，就是通过API去约束。</li>
+</ul>
+</li>
+</ul>
+<h1 id="第六章_代码复用模式">第六章 代码复用模式</h1><p>##继承</p>
+<ul>
+<li>经典继承<ul>
+<li>经典继承就是很通用的通过构造函数继承父类的私有方法和属性，通过原型链继承父有的公用方法。<pre>
+function Parent(name) {
+  this.name = name;
+}
+Parent.prototype.say = function() {
+  console.log(this.name);
+}
+function Child(name) {
+  Parent.apply(this, arguments);
+}
+Child.prototype = new Parent();//第一次调用parent()
+var instace = new Child('leon');//第二次调用parent()
+</pre></li>
+<li>上述方法看起来很完美，但是也有缺点：<strong>父构造函数</strong> 会被调用两次，<strong>私有属性</strong>会被设置两次，对应上面的parent()和name属性，name属性会在child实例里面有一个以及其原型上有一个。原型上面的属性其实是冗余的，两次调用也是冗余的，这就会带来额外的性能开销。</li>
+</ul>
+</li>
+<li>共享原型<ul>
+<li><code>Child.prototype = Parent.prototype;</code> 好处是很便捷而且没有额外的开销，坏处非常明显，一处原型修改，全部都修改了。</li>
+</ul>
+</li>
+<li>临时构造函数<ul>
+<li>由经典继承的问题我们思考，其实关键问题在于<code>Child.prototype = new Parent();</code>这一句上面，我们希望子类能够连接上父类的原型，但是简单的通过将子类的原型变成父类的一个实例的话又会让父类白调用一次构造函数，而通过共享原型又会导致原型指向同一个，所以有一种方式就是借用一个空函数来<strong>传递原型</strong>：<pre>
+function inherit(C, P) {
+  var F = function(){};
+  F.prototype = P.prototype;
+  C.prototype = new F();
+  C.supperClass = P.prototype;
+  C.prototype.constructor = C;
+}
+</pre></li>
+<li>这就是一种最常用的继承方式<h2 id="Kclass">Kclass</h2>Kclass是对上面的一种总结：<pre>
+//假设语法糖kclass使用方法如下：
+var Man = Kclass(null, {
+__construct: function (what) {
+  console.log("Man is constructor");
+  this.name = what;
+},
+getName: function () {
+  return this.name;
+}
+});
+var SuperMan = Kclass(Man, {
+__construct: function () {
+  console.log("SuperMan is constructor");
+},
+getName: function () {
+  var name = SuperMan.uber.getName.call(this);
+  return "I am" + name;
+}
+});
+//根据设计实现方式如下：
+function Kcalss(Parent, props) {
+var Child, F, i;
+//构造函数
+Child = function () {
+  if （Child.uber && Child.uber.hasOwnProperty("__construct")） {
+      Child.uber.__construct.apply(this, arguments);
+  }
+  if (Child.prototype.hasOwnProperty("__construct")) {
+      Child.prototype.__construct.apply(this, arguments);
+  }
+}
+//继承
+Parent = Parent || Object;
+F = function () {};
+F.prototype = Parent.prototype;
+Child.prototype = new F();
+Child.uber = Parent.prtotype;
+Child.prototype.constructor = Child;
+//属性
+for (i in props) {
+  if (props.hasOwnProperty(i)) {
+      Child.prototype[i] = props[i];
+  }
+}
+return Child;
+}
+</pre></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/读书笔记/">
+                #读书笔记
+              </a>
+            
+          </div>
+        
+
+        
+          <div class="post-nav">
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2015/03/17/前端工程构建之gulp/">前端工程构建之gulp</a>
+              
+            </div>
+
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2015/03/10/写在初始的话/">写在初始的话</a>
+              
+            </div>
+          </div>
+        
+
+        
+        
+      </div>
+    
+  </div>
+
+
+
+  
+    <div class="comments" id="comments">
+      
+        <div class="ds-thread" data-thread-key="2015/03/15/把书看薄-javascript模式/"
+             data-title="把书看薄-javascript模式" data-url="http://liyangready.github.io/2015/03/15/把书看薄-javascript模式/">
+        </div>
+
+      
+    </div>
+  
+
+          </div>
+
+          
+        </div>
+
+        
+<div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+    
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview">
+          站点概览
+        </li>
+      </ul>
+    
+
+    <div class="site-overview">
+      <div class="site-author motion-element">
+        <img class="site-author-image" src="/images/default_avatar.jpg" alt="leon.li" />
+        <p class="site-author-name">leon.li</p>
+      </div>
+      <p class="site-description motion-element"></p>
+      <div class="site-state motion-element">
+        <div class="site-state-item site-state-posts">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </div>
+        <div class="site-state-item site-state-tags">
+            <span class="site-state-item-count">10</span>
+            <span class="site-state-item-name">标签</span>
+        </div>
+        <div class="site-state-item site-state-pages">
+            <span class="site-state-item-count">1</span>
+            <span class="site-state-item-name">页面</span>
+        </div>
+      </div>
+
+      
+
+      <div class="social-info motion-element">
+        
+      </div>
+
+    </div>
+
+    
+      <div class="post-toc sidebar-panel-active">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第四章_函数"><span class="nav-number">1.</span> <span class="nav-text">第四章 函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第六章_代码复用模式"><span class="nav-number"></span> <span class="nav-text">第六章 代码复用模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kclass"><span class="nav-number">1.</span> <span class="nav-text">Kclass</span></a></li></ol>
+      </div>
+    
+  </div>
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2015
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">leon.li</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 - <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT</a>
+</div>
+
+
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".fancybox").fancybox();
+    });
+  </script>
+
+  <script type="text/javascript">
+  function hasMobileUA () {
+    var nav = window.navigator;
+    var ua = nav.userAgent;
+    var pa = /iPad|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g;
+
+    return pa.test(ua);
+  }
+
+  function isDesktop () {
+    return screen.width > 991 && !hasMobileUA();
+  }
+
+  function isTablet () {
+    return screen.width < 992 && screen.width > 767 && hasMobileUA();
+  }
+
+  function isMobile () {
+    return screen.width < 767 && hasMobileUA();
+  }
+
+  function escapeSelector (selector) {
+    return selector.replace(/[!"$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+  }
+</script>
+
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  
+
+  <script type="text/javascript" id="motion.global">
+  $(document).ready(function () {
+    var body = $('body');
+    var isSidebarVisible = false;
+    var sidebarToggle = $('.sidebar-toggle');
+    var sidebarToggleLine1st = $('.sidebar-toggle-line-first')
+    var sidebarToggleLine2nd = $('.sidebar-toggle-line-middle');
+    var sidebarToggleLine3rd = $('.sidebar-toggle-line-last');
+    var sidebar = $('.sidebar');
+
+    var SIDEBAR_WIDTH = '320px';
+    var SIDEBAR_DISPLAY_DURATION = 300;
+
+    var sidebarToogleLineStatusInit = {width: '100%', opacity: 1, left: 0, rotateZ: 0, top: 0};
+
+    var sidebarToggleLine1stStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine1stStatusArrow = {width: '50%', rotateZ: '-45deg', top: '2px'};
+    var sidebarToogleLine1stStatusClose = {width: '100%', rotateZ: '-45deg', top: '5px'};
+
+    var sidebarToggleLine2ndStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine2ndStatusArrow = {width: '90%'};
+    var sidebarToogleLine2ndStatusClose = {opacity: 0};
+
+    var sidebarToggleLine3rdStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine3rdStatusArrow = {width: '50%', rotateZ: '45deg', top: '-2px'};
+    var sidebarToogleLine3rdStatusClose = {width: '100%', rotateZ: '45deg', top: '-5px'};
+
+    sidebatToggleMotion();
+    postsListMotion();
+    backToTopMotion();
+
+
+    $(document)
+      .on('sidebar.isShowing', function () {
+        isDesktop() && body.velocity(
+          {paddingRight: SIDEBAR_WIDTH},
+          SIDEBAR_DISPLAY_DURATION
+        );
+        sidebarContentMotion();
+      })
+      .on('sidebar.isHiding', function () {});
+
+
+    function backToTopMotion () {
+      var b2top = $('.back-to-top');
+      b2top.on('click', function () {
+        body.velocity('scroll');
+      });
+    }
+
+    function sidebarShowMotion () {
+
+      sidebarToggleLine1st.velocity(sidebarToogleLine1stStatusClose);
+      sidebarToggleLine2nd.velocity(sidebarToogleLine2ndStatusClose);
+      sidebarToggleLine3rd.velocity(sidebarToogleLine3rdStatusClose);
+
+      sidebar.velocity({width: SIDEBAR_WIDTH}, {
+        duration: SIDEBAR_DISPLAY_DURATION,
+        complete: function () {
+          sidebar.addClass('sidebar-active');
+          sidebar.trigger('sidebar.didShow');
+        }
+      });
+      sidebar.trigger('sidebar.isShowing');
+    }
+
+    function sidebarHideMotion () {
+      isDesktop() && body.velocity({paddingRight: 0});
+      sidebar.velocity('reverse');
+
+      sidebarToggleLine1st.velocity(sidebarToggleLine1stStatusInit);
+      sidebarToggleLine2nd.velocity(sidebarToggleLine2ndStatusInit);
+      sidebarToggleLine3rd.velocity(sidebarToggleLine3rdStatusInit);
+
+      sidebar.removeClass('sidebar-active');
+      sidebar.trigger('sidebar.isHiding');
+    };
+
+    function sidebarContentMotion () {
+      $('.sidebar .motion-element').velocity(
+        'transition.slideRightIn',
+        {stagger: 50, drag: true}
+      );
+    }
+
+    function postsListMotion () {
+      $('.post').velocity('transition.slideDownIn', {stagger: 300, drag: true});
+    }
+
+    function sidebatToggleMotion () {
+      sidebarToggle.on('click', function () {
+        isSidebarVisible ? sidebarHideMotion() : sidebarShowMotion();
+        isSidebarVisible = !isSidebarVisible;
+      });
+
+      sidebarToggle.hover(function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusArrow);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusArrow);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusArrow);
+      }, function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusInit);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusInit);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusInit);
+      });
+    }
+  });
+
+</script>
+
+
+
+
+
+  
+  
+<script type="text/javascript" id="bootstrap.scrollspy.custom">
+  /* ========================================================================
+  * Bootstrap: scrollspy.js v3.3.2
+  * http://getbootstrap.com/javascript/#scrollspy
+  * ========================================================================
+  * Copyright 2011-2015 Twitter, Inc.
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+  * ======================================================================== */
+
+  /**
+   * Custom by iissnan
+   *
+   * - Add a `clear.bs.scrollspy` event.
+   * - Esacpe targets selector.
+   */
+
+
+  +function ($) {
+    'use strict';
+
+    // SCROLLSPY CLASS DEFINITION
+    // ==========================
+
+    function ScrollSpy(element, options) {
+      this.$body          = $(document.body)
+      this.$scrollElement = $(element).is(document.body) ? $(window) : $(element)
+      this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
+      this.selector       = (this.options.target || '') + ' .nav li > a'
+      this.offsets        = []
+      this.targets        = []
+      this.activeTarget   = null
+      this.scrollHeight   = 0
+
+      this.$scrollElement.on('scroll.bs.scrollspy', $.proxy(this.process, this))
+      this.refresh()
+      this.process()
+    }
+
+    ScrollSpy.VERSION  = '3.3.2'
+
+    ScrollSpy.DEFAULTS = {
+      offset: 10
+    }
+
+    ScrollSpy.prototype.getScrollHeight = function () {
+      return this.$scrollElement[0].scrollHeight || Math.max(this.$body[0].scrollHeight, document.documentElement.scrollHeight)
+    }
+
+    ScrollSpy.prototype.refresh = function () {
+      var that          = this
+      var offsetMethod  = 'offset'
+      var offsetBase    = 0
+
+      this.offsets      = []
+      this.targets      = []
+      this.scrollHeight = this.getScrollHeight()
+
+      if (!$.isWindow(this.$scrollElement[0])) {
+        offsetMethod = 'position'
+        offsetBase   = this.$scrollElement.scrollTop()
+      }
+
+      this.$body
+        .find(this.selector)
+        .map(function () {
+          var $el   = $(this)
+          var href  = $el.data('target') || $el.attr('href')
+          var $href = /^#./.test(href) && $(escapeSelector(href)) // Need to escape selector.
+
+          return ($href
+            && $href.length
+            && $href.is(':visible')
+            && [[$href[offsetMethod]().top + offsetBase, href]]) || null
+        })
+        .sort(function (a, b) { return a[0] - b[0] })
+        .each(function () {
+          that.offsets.push(this[0])
+          that.targets.push(this[1])
+        })
+
+
+    }
+
+    ScrollSpy.prototype.process = function () {
+      var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
+      var scrollHeight = this.getScrollHeight()
+      var maxScroll    = this.options.offset + scrollHeight - this.$scrollElement.height()
+      var offsets      = this.offsets
+      var targets      = this.targets
+      var activeTarget = this.activeTarget
+      var i
+
+      if (this.scrollHeight != scrollHeight) {
+        this.refresh()
+      }
+
+      if (scrollTop >= maxScroll) {
+        return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
+      }
+
+      if (activeTarget && scrollTop < offsets[0]) {
+        $(this.selector).trigger('clear.bs.scrollspy')  // Add a custom event.
+        this.activeTarget = null
+        return this.clear()
+      }
+
+      for (i = offsets.length; i--;) {
+        activeTarget != targets[i]
+          && scrollTop >= offsets[i]
+          && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
+          && this.activate(targets[i])
+      }
+    }
+
+    ScrollSpy.prototype.activate = function (target) {
+      this.activeTarget = target
+
+      this.clear()
+
+      var selector = this.selector +
+        '[data-target="' + target + '"],' +
+        this.selector + '[href="' + target + '"]'
+
+      var active = $(selector)
+        .parents('li')
+        .addClass('active')
+
+      if (active.parent('.dropdown-menu').length) {
+        active = active
+          .closest('li.dropdown')
+          .addClass('active')
+      }
+
+      active.trigger('activate.bs.scrollspy')
+    }
+
+    ScrollSpy.prototype.clear = function () {
+      $(this.selector)
+        .parentsUntil(this.options.target, '.active')
+        .removeClass('active')
+    }
+
+
+    // SCROLLSPY PLUGIN DEFINITION
+    // ===========================
+
+    function Plugin(option) {
+      return this.each(function () {
+        var $this   = $(this)
+        var data    = $this.data('bs.scrollspy')
+        var options = typeof option == 'object' && option
+
+        if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
+        if (typeof option == 'string') data[option]()
+      })
+    }
+
+    var old = $.fn.scrollspy
+
+    $.fn.scrollspy             = Plugin
+    $.fn.scrollspy.Constructor = ScrollSpy
+
+
+    // SCROLLSPY NO CONFLICT
+    // =====================
+
+    $.fn.scrollspy.noConflict = function () {
+      $.fn.scrollspy = old
+      return this
+    }
+
+
+    // SCROLLSPY DATA-API
+    // ==================
+
+    $(window).on('load.bs.scrollspy.data-api', function () {
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this)
+        Plugin.call($spy, $spy.data())
+      })
+    })
+
+  }(jQuery);
+</script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      $tocSelector.scrollPager({
+        max: getTOCMaxHeight()
+      });
+    }
+
+    function getTOCMaxHeight () {
+      // TODO: Make it beautiful
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+        parseInt($sidebarInner.css('padding-top'), 10) -
+        parseInt($sidebarInner.css('padding-bottom'), 10) -
+        $('.sidebar-nav').height() -
+        parseInt($tocSelector.css('margin-top'), 10) -
+        parseInt($tocSelector.css('margin-bottom'), 10);
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+      });
+    }
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      if ($('.post-toc').html().trim().length > 0 && isDesktop()) {
+        setTimeout(function () {
+          $('.sidebar-toggle').trigger('click');
+        }, 800);
+      }
+    });
+  </script>
+
+
+
+
+  
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"liyangready"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+  
+</body>
+</html>

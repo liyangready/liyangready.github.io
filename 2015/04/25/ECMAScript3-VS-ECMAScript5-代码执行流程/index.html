@@ -1,0 +1,928 @@
+<!doctype html>
+<html class="theme-next use-motion">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.3.0rc5"/>
+
+
+
+
+	<meta name="keywords" content="规范," />
+
+  <title> ECMAScript3 VS ECMAScript5 - 代码执行流程 // liyangready's blog </title>
+</head>
+
+<body>
+  <div class="container one-column page-post-detail">
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+    <a href="/" class="brand">
+        <span class="logo">
+          <i class="icon-logo"></i>
+        </span>
+        <span class="site-title">liyangready's blog</span>
+    </a>
+</h1>
+
+
+  <ul id="menu" class="menu">
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/" class="menu-link">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives" class="menu-link">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags" class="menu-link">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+            
+          
+
+          <div id="posts" class="posts-expand">
+            
+  
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              ECMAScript3 VS ECMAScript5 - 代码执行流程
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-04-25
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          <p>##ECMAScript3 代码执行流程</p>
+<p>###ES3中可以执行的代码分为下面三种：</p>
+<ul>
+<li>全局代码</li>
+<li>函数代码</li>
+<li>eval代码</li>
+</ul>
+<p>ECAMScript代码进入上述的每一种代码环境开始执行之前，会创建一个叫做 <em>执行上下文(Execution Context)</em> 的东西，它存在于这个代码环境执行的整个过程，在退出代码环境的时候，也退出了对应的上下文。</p>
+<p>简单的来说，一段javascript代码，从上到下，每次进入到上述3种之一的代码，就会创建一个上下文，可执行代码执行完了之后这个上下文也会被销毁，整个程序自然而然可以想象的到，内部维护了一个栈，这个栈的顶端就代表着当前的执行环境，每进入一个新的代码执行环境，就创建并推入上下文栈一个新的上下文，退出的时候从上下文栈中推出。</p>
+<p><em>可执行上下文</em> 我们简称 <strong>EC</strong>。</p>
+<a id="more"></a>
+<p>举个例子</p>
+<pre>
+var GLOBAL = 1;     ------ 1
+function fn () {  
+    var inner = 2;  ------ 3
+}
+fn();               ------ 2
+console.log('end'); ------ 4
+</pre>
+
+<p>代码先执行1，再执行2，再执行3,最后是4，这个不用多说吧。</p>
+<p>在执行代码1之前就是进入了一个<strong>全局EC</strong>，EC栈就是这样的：</p>
+<pre>
+ //栈头就指示了当前正在使用的可执行上下文
+ 栈头：   全局EC
+</pre>
+
+<p>在执行到代码2的时候进入fn函数代码，创建一个 <strong>函数EC</strong> 并且压入EC栈中，此时全局代码并没有退出，所以在执行3的时候EC栈是：</p>
+<pre>
+ 栈头：  函数fn的EC
+        全局EC
+</pre>
+
+<p>然后函数执行完毕，从函数中出来，函数栈弹出，执行 步骤4的时候EC栈为：</p>
+<pre>
+ 栈头： 全局EC
+</pre>
+
+<p>最后所有代码执行结束，全局EC也退出，栈被销毁，执行完毕。</p>
+<p>###<strong>EC</strong>包含了三个部分：</p>
+<ul>
+<li>Scope chain (常说的 作用域链)</li>
+<li>this (声明了this指向谁)</li>
+<li>Variable object （变量对象，存储变量值）</li>
+</ul>
+<p><strong>我们把创建这三个参数作为第一步</strong>，所以对于一个javascript引擎，执行流进入了一段可执行代码，第一步：</p>
+<p><strong>1、 创建对应的EC，初始化 this、变量对象、作用域链</strong></p>
+<p>下面分别讲解变量对象和作用域链的值是什么，以及有什么用。</p>
+<p>####变量对象</p>
+<p>变量对象是一个抽象的概念，在不同的可执行环境中对应的真实对象不同，在全局代码、函数代码、eval代码中分别对应：<br>全局对象 、 激活对象、 Calling context.vo，这不重要，我们看具体的。</p>
+<p>变量对象由3部分组成：</p>
+<ul>
+<li>变量</li>
+<li>声明式函数</li>
+<li>函数形参 </li>
+</ul>
+<p>变量是指通过 <em>var</em>声明的变量。<br>声明式函数是指 函数声明 而不是通过var指向的函数，那种算在变量里面。<br>形参就不用讲了。</p>
+<p>如果出现重复标识符，优先级 函数声明 &gt; 形参 &gt; var 声明 </p>
+<p>在EC初始化完成之后，变量对象会有一个赋值的过程，称为<em>变量实例化</em> ，它就是找出变量对象的3种组成部分赋给变量对象。</p>
+<p><strong>注：到此为止代码都没开始执行</strong> ，我们把EC抽象成一个对象，比如下面这段代码</p>
+<pre>
+(function(x){
+    alert(x);
+    alert(y);
+
+    var x = 1;
+    var y = 2;
+    function x(){}
+
+    alert(x);
+})(1)
+
+在代码执行之前，形成 EC，然后变量对象 VO开始实例化，得到的结果：
+
+EC = {
+  VO: {
+    x: function x(){}, //根据优先级，函数声明保留下来了
+    y: undefined //这里的理解很关键，这时候代码还没开始执行，对于变量，只是解析到了标识符，对应的值要在代码执行之后才能被更改。
+  }
+}
+
+所以在第一行代码alert x和y就对应着变量对象里面的初始值，随着代码的执行，这个值会被更改，比如 x对应的值会被改成1，第二个alert就对应1了
+</pre>
+
+<p>####作用域链<br>作用域链:<br>全局作用域链就是全局对象，没啥好说的，看函数作用域链。</p>
+<p>fn的SC = [当前EC的VO , fn的[[scope]]属性]</p>
+<p>fn的[[scope]]属性是一个内置属性，它就等于 fn创建时候的EC对应的VO。比较绕：</p>
+<p>其实fn的SC = [[当前EC的VO , fn被创建时候EC对应的VO]，说白了就是它父亲对应的VO，所以作用域链上面就是一个个变量对象。</p>
+<p>其中当前的变量对象放在作用域链最前面。</p>
+<p>作用域链就可以帮助解析标示符，先从当前变量对象找起，如果当前没有就去找父级的。</p>
+<p>例子：</p>
+<pre>
+var x = 1;   ---- 1
+(function (){
+  alert(x);  ----- 2
+  var x = 2;
+  var y = 3;
+})()
+
+//
+在执行1之前创建全局EC
+GloablEC = {
+  VO: {
+    x: undefined  
+  },
+  SC: [GlobalEC.VO]
+}
+
+这个从上面讲的知识就能得到。
+
+在执行2之前进入函数代码创建函数EC
+
+fnEC = {
+  VO: {
+    x: undefined, //这个x和全局x没任何关系，因为上面的变量实例化说了，它只关注这段代码里面的 变量、函数声明和形参，里面有var x了，所以创建一个x
+    y: undefined
+  },
+  SC: [fnEC.VO,GlobalEC.VO] 
+}
+
+所以2处的代码alert的时候先去找 fnEC.VO里面有没有x，有，alert出undefined，如果没有才会去找GlobalEC.VO,此时由于已经执行过了 x =1；对应的GlobalEC.VO值就是1.
+</pre>
+
+<p>####this 指向没有太多规律，以后遇到再写</p>
+<p><strong>至此，代码执行前第二步完成</strong>，所以整个代码执行流程：</p>
+<ul>
+<li><p>进入代码环境，代码执行前：</p>
+<ul>
+<li><strong>创建对应的EC，初始化 this、变量对象、作用域链</strong></li>
+<li><strong>变量实例化、作用域链赋值</strong></li>
+</ul>
+</li>
+<li><p>代码开始执行：</p>
+<ul>
+<li><strong>根据赋值修改变量对象里面的标识符对应的值</strong></li>
+<li><strong>根据作用域链查找标识符对应的值</strong></li>
+</ul>
+</li>
+</ul>
+<p>##ECMAScript5 代码执行流程</p>
+<p>###ES5中可执行代码和ES3一样</p>
+<p>###ES5中<strong>EC</strong>也是包含了三个部分：</p>
+<ul>
+<li>LexicalEnvironment (词法环境)</li>
+<li>this (声明了this指向谁)</li>
+<li>VariableEnvironment （变量环境，存储变量值）</li>
+</ul>
+<p>其中 变量环境和词法环境在初始化的时候 都指向同一个新创建的 词法环境， 在代码执行过程中，词法环境里面的环境记录会发生改变，但是变量环境对应的值不再改变。</p>
+<p><em>stackoverflow上面有个关于变量环境和词法环境关系的讨论，一般情况下认为它们相等就行了</em></p>
+<p><a href="http://stackoverflow.com/questions/15031667/clarity-on-the-difference-between-lexicalenvironment-and-variableenvironment" target="_blank" rel="external">变量环境和词法环境关系</a></p>
+<p>###进入一段 function代码<br><strong>1 创建EC</strong></p>
+<p>初始化过程和ES3类似，只不过不是创建变量对象和作用域链，改成了词法环境和变量环境。</p>
+<p>词法环境 = 环境记录项(类似于变量对象) + 外部词法环境。<br>创建一个新的词法环境是，环境记录项和ES3类似是当前词法环境的标识符、函数声明、形参等，外部词法环境也是等于 function的[[scope]]属性，这属于对应的是function创建时候的词法环境。</p>
+<p>有点类似于 作用域链的感觉。层层嵌套词法环境在标识符解析的时候就能形成作用域链一般的功能。</p>
+<p><strong>2 初始化绑定</strong></p>
+<p>环境记录项在函数中和ES3一样，收集 函数声明、变量声明和形参</p>
+<p><strong>ES5会判断是否是严格模式</strong></p>
+<p><strong>ES5会对一些函数的新属性做处理，比如 getter之类的</strong></p>
+<p>##结论</p>
+<ul>
+<li>ES3和ES5在代码执行方面其实换汤不换药，不过换了几个概念。</li>
+<li>作用域链在ES5中用词法环境理解就ok，变量对象即存储变量值的在ES5中用环境标示来理解。</li>
+<li>ES5和ES3一样，在进入可执行代码时会先准备环境，所以形成了有些资料里面所谓的 <strong>函数声明前置</strong>的现象，因为执行上下文中会先把执行环境里面的 <strong>变量</strong>、<strong>函数声明</strong>以及<strong>形参</strong> 准备好，理解了这点，对于代码执行就基本搞懂了，不管alert放在哪儿，都知道应该是什么值。</li>
+</ul>
+
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/规范/">
+                #规范
+              </a>
+            
+          </div>
+        
+
+        
+          <div class="post-nav">
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2015/07/17/移动开发学习笔记/">移动开发学习笔记</a>
+              
+            </div>
+
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2015/04/16/javascript兼容性/">javascript兼容性</a>
+              
+            </div>
+          </div>
+        
+
+        
+        
+      </div>
+    
+  </div>
+
+
+
+  
+    <div class="comments" id="comments">
+      
+        <div class="ds-thread" data-thread-key="2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/"
+             data-title="ECMAScript3 VS ECMAScript5 - 代码执行流程" data-url="http://liyangready.github.io/2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/">
+        </div>
+
+      
+    </div>
+  
+
+          </div>
+
+          
+        </div>
+
+        
+<div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+    
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview">
+          站点概览
+        </li>
+      </ul>
+    
+
+    <div class="site-overview">
+      <div class="site-author motion-element">
+        <img class="site-author-image" src="/images/default_avatar.jpg" alt="leon.li" />
+        <p class="site-author-name">leon.li</p>
+      </div>
+      <p class="site-description motion-element"></p>
+      <div class="site-state motion-element">
+        <div class="site-state-item site-state-posts">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </div>
+        <div class="site-state-item site-state-tags">
+            <span class="site-state-item-count">10</span>
+            <span class="site-state-item-name">标签</span>
+        </div>
+        <div class="site-state-item site-state-pages">
+            <span class="site-state-item-count">1</span>
+            <span class="site-state-item-name">页面</span>
+        </div>
+      </div>
+
+      
+
+      <div class="social-info motion-element">
+        
+      </div>
+
+    </div>
+
+    
+      <div class="post-toc sidebar-panel-active">
+        
+      </div>
+    
+  </div>
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2015
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">leon.li</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 - <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT</a>
+</div>
+
+
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".fancybox").fancybox();
+    });
+  </script>
+
+  <script type="text/javascript">
+  function hasMobileUA () {
+    var nav = window.navigator;
+    var ua = nav.userAgent;
+    var pa = /iPad|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g;
+
+    return pa.test(ua);
+  }
+
+  function isDesktop () {
+    return screen.width > 991 && !hasMobileUA();
+  }
+
+  function isTablet () {
+    return screen.width < 992 && screen.width > 767 && hasMobileUA();
+  }
+
+  function isMobile () {
+    return screen.width < 767 && hasMobileUA();
+  }
+
+  function escapeSelector (selector) {
+    return selector.replace(/[!"$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+  }
+</script>
+
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  
+
+  <script type="text/javascript" id="motion.global">
+  $(document).ready(function () {
+    var body = $('body');
+    var isSidebarVisible = false;
+    var sidebarToggle = $('.sidebar-toggle');
+    var sidebarToggleLine1st = $('.sidebar-toggle-line-first')
+    var sidebarToggleLine2nd = $('.sidebar-toggle-line-middle');
+    var sidebarToggleLine3rd = $('.sidebar-toggle-line-last');
+    var sidebar = $('.sidebar');
+
+    var SIDEBAR_WIDTH = '320px';
+    var SIDEBAR_DISPLAY_DURATION = 300;
+
+    var sidebarToogleLineStatusInit = {width: '100%', opacity: 1, left: 0, rotateZ: 0, top: 0};
+
+    var sidebarToggleLine1stStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine1stStatusArrow = {width: '50%', rotateZ: '-45deg', top: '2px'};
+    var sidebarToogleLine1stStatusClose = {width: '100%', rotateZ: '-45deg', top: '5px'};
+
+    var sidebarToggleLine2ndStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine2ndStatusArrow = {width: '90%'};
+    var sidebarToogleLine2ndStatusClose = {opacity: 0};
+
+    var sidebarToggleLine3rdStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine3rdStatusArrow = {width: '50%', rotateZ: '45deg', top: '-2px'};
+    var sidebarToogleLine3rdStatusClose = {width: '100%', rotateZ: '45deg', top: '-5px'};
+
+    sidebatToggleMotion();
+    postsListMotion();
+    backToTopMotion();
+
+
+    $(document)
+      .on('sidebar.isShowing', function () {
+        isDesktop() && body.velocity(
+          {paddingRight: SIDEBAR_WIDTH},
+          SIDEBAR_DISPLAY_DURATION
+        );
+        sidebarContentMotion();
+      })
+      .on('sidebar.isHiding', function () {});
+
+
+    function backToTopMotion () {
+      var b2top = $('.back-to-top');
+      b2top.on('click', function () {
+        body.velocity('scroll');
+      });
+    }
+
+    function sidebarShowMotion () {
+
+      sidebarToggleLine1st.velocity(sidebarToogleLine1stStatusClose);
+      sidebarToggleLine2nd.velocity(sidebarToogleLine2ndStatusClose);
+      sidebarToggleLine3rd.velocity(sidebarToogleLine3rdStatusClose);
+
+      sidebar.velocity({width: SIDEBAR_WIDTH}, {
+        duration: SIDEBAR_DISPLAY_DURATION,
+        complete: function () {
+          sidebar.addClass('sidebar-active');
+          sidebar.trigger('sidebar.didShow');
+        }
+      });
+      sidebar.trigger('sidebar.isShowing');
+    }
+
+    function sidebarHideMotion () {
+      isDesktop() && body.velocity({paddingRight: 0});
+      sidebar.velocity('reverse');
+
+      sidebarToggleLine1st.velocity(sidebarToggleLine1stStatusInit);
+      sidebarToggleLine2nd.velocity(sidebarToggleLine2ndStatusInit);
+      sidebarToggleLine3rd.velocity(sidebarToggleLine3rdStatusInit);
+
+      sidebar.removeClass('sidebar-active');
+      sidebar.trigger('sidebar.isHiding');
+    };
+
+    function sidebarContentMotion () {
+      $('.sidebar .motion-element').velocity(
+        'transition.slideRightIn',
+        {stagger: 50, drag: true}
+      );
+    }
+
+    function postsListMotion () {
+      $('.post').velocity('transition.slideDownIn', {stagger: 300, drag: true});
+    }
+
+    function sidebatToggleMotion () {
+      sidebarToggle.on('click', function () {
+        isSidebarVisible ? sidebarHideMotion() : sidebarShowMotion();
+        isSidebarVisible = !isSidebarVisible;
+      });
+
+      sidebarToggle.hover(function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusArrow);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusArrow);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusArrow);
+      }, function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusInit);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusInit);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusInit);
+      });
+    }
+  });
+
+</script>
+
+
+
+
+
+  
+  
+<script type="text/javascript" id="bootstrap.scrollspy.custom">
+  /* ========================================================================
+  * Bootstrap: scrollspy.js v3.3.2
+  * http://getbootstrap.com/javascript/#scrollspy
+  * ========================================================================
+  * Copyright 2011-2015 Twitter, Inc.
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+  * ======================================================================== */
+
+  /**
+   * Custom by iissnan
+   *
+   * - Add a `clear.bs.scrollspy` event.
+   * - Esacpe targets selector.
+   */
+
+
+  +function ($) {
+    'use strict';
+
+    // SCROLLSPY CLASS DEFINITION
+    // ==========================
+
+    function ScrollSpy(element, options) {
+      this.$body          = $(document.body)
+      this.$scrollElement = $(element).is(document.body) ? $(window) : $(element)
+      this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
+      this.selector       = (this.options.target || '') + ' .nav li > a'
+      this.offsets        = []
+      this.targets        = []
+      this.activeTarget   = null
+      this.scrollHeight   = 0
+
+      this.$scrollElement.on('scroll.bs.scrollspy', $.proxy(this.process, this))
+      this.refresh()
+      this.process()
+    }
+
+    ScrollSpy.VERSION  = '3.3.2'
+
+    ScrollSpy.DEFAULTS = {
+      offset: 10
+    }
+
+    ScrollSpy.prototype.getScrollHeight = function () {
+      return this.$scrollElement[0].scrollHeight || Math.max(this.$body[0].scrollHeight, document.documentElement.scrollHeight)
+    }
+
+    ScrollSpy.prototype.refresh = function () {
+      var that          = this
+      var offsetMethod  = 'offset'
+      var offsetBase    = 0
+
+      this.offsets      = []
+      this.targets      = []
+      this.scrollHeight = this.getScrollHeight()
+
+      if (!$.isWindow(this.$scrollElement[0])) {
+        offsetMethod = 'position'
+        offsetBase   = this.$scrollElement.scrollTop()
+      }
+
+      this.$body
+        .find(this.selector)
+        .map(function () {
+          var $el   = $(this)
+          var href  = $el.data('target') || $el.attr('href')
+          var $href = /^#./.test(href) && $(escapeSelector(href)) // Need to escape selector.
+
+          return ($href
+            && $href.length
+            && $href.is(':visible')
+            && [[$href[offsetMethod]().top + offsetBase, href]]) || null
+        })
+        .sort(function (a, b) { return a[0] - b[0] })
+        .each(function () {
+          that.offsets.push(this[0])
+          that.targets.push(this[1])
+        })
+
+
+    }
+
+    ScrollSpy.prototype.process = function () {
+      var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
+      var scrollHeight = this.getScrollHeight()
+      var maxScroll    = this.options.offset + scrollHeight - this.$scrollElement.height()
+      var offsets      = this.offsets
+      var targets      = this.targets
+      var activeTarget = this.activeTarget
+      var i
+
+      if (this.scrollHeight != scrollHeight) {
+        this.refresh()
+      }
+
+      if (scrollTop >= maxScroll) {
+        return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
+      }
+
+      if (activeTarget && scrollTop < offsets[0]) {
+        $(this.selector).trigger('clear.bs.scrollspy')  // Add a custom event.
+        this.activeTarget = null
+        return this.clear()
+      }
+
+      for (i = offsets.length; i--;) {
+        activeTarget != targets[i]
+          && scrollTop >= offsets[i]
+          && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
+          && this.activate(targets[i])
+      }
+    }
+
+    ScrollSpy.prototype.activate = function (target) {
+      this.activeTarget = target
+
+      this.clear()
+
+      var selector = this.selector +
+        '[data-target="' + target + '"],' +
+        this.selector + '[href="' + target + '"]'
+
+      var active = $(selector)
+        .parents('li')
+        .addClass('active')
+
+      if (active.parent('.dropdown-menu').length) {
+        active = active
+          .closest('li.dropdown')
+          .addClass('active')
+      }
+
+      active.trigger('activate.bs.scrollspy')
+    }
+
+    ScrollSpy.prototype.clear = function () {
+      $(this.selector)
+        .parentsUntil(this.options.target, '.active')
+        .removeClass('active')
+    }
+
+
+    // SCROLLSPY PLUGIN DEFINITION
+    // ===========================
+
+    function Plugin(option) {
+      return this.each(function () {
+        var $this   = $(this)
+        var data    = $this.data('bs.scrollspy')
+        var options = typeof option == 'object' && option
+
+        if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
+        if (typeof option == 'string') data[option]()
+      })
+    }
+
+    var old = $.fn.scrollspy
+
+    $.fn.scrollspy             = Plugin
+    $.fn.scrollspy.Constructor = ScrollSpy
+
+
+    // SCROLLSPY NO CONFLICT
+    // =====================
+
+    $.fn.scrollspy.noConflict = function () {
+      $.fn.scrollspy = old
+      return this
+    }
+
+
+    // SCROLLSPY DATA-API
+    // ==================
+
+    $(window).on('load.bs.scrollspy.data-api', function () {
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this)
+        Plugin.call($spy, $spy.data())
+      })
+    })
+
+  }(jQuery);
+</script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      $tocSelector.scrollPager({
+        max: getTOCMaxHeight()
+      });
+    }
+
+    function getTOCMaxHeight () {
+      // TODO: Make it beautiful
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+        parseInt($sidebarInner.css('padding-top'), 10) -
+        parseInt($sidebarInner.css('padding-bottom'), 10) -
+        $('.sidebar-nav').height() -
+        parseInt($tocSelector.css('margin-top'), 10) -
+        parseInt($tocSelector.css('margin-bottom'), 10);
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+      });
+    }
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      if ($('.post-toc').html().trim().length > 0 && isDesktop()) {
+        setTimeout(function () {
+          $('.sidebar-toggle').trigger('click');
+        }, 800);
+      }
+    });
+  </script>
+
+
+
+
+  
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"liyangready"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+  
+</body>
+</html>

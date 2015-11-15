@@ -1,0 +1,943 @@
+<!doctype html>
+<html class="theme-next use-motion">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.3.0rc5"/>
+
+
+
+
+
+    <meta name="keywords" content="Hexo,next" />
+
+
+
+
+
+    <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.3.0rc5" />
+
+
+
+
+  <title> liyangready's blog </title>
+</head>
+
+<body>
+  <div class="container one-column 
+   page-home 
+">
+
+    <div id="header" class="header">
+      <div class="header-inner">
+        <h1 class="site-meta">
+    <a href="/" class="brand">
+        <span class="logo">
+          <i class="icon-logo"></i>
+        </span>
+        <span class="site-title">liyangready's blog</span>
+    </a>
+</h1>
+
+
+  <ul id="menu" class="menu">
+    
+      
+      <li class="menu-item menu-item-home">
+        <a href="/" class="menu-link">
+          <i class="menu-item-icon icon-home"></i> <br />
+          首页
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-archives">
+        <a href="/archives" class="menu-link">
+          <i class="menu-item-icon icon-archives"></i> <br />
+          归档
+        </a>
+      </li>
+    
+      
+      <li class="menu-item menu-item-tags">
+        <a href="/tags" class="menu-link">
+          <i class="menu-item-icon icon-tags"></i> <br />
+          标签
+        </a>
+      </li>
+    
+  </ul>
+
+
+      </div>
+    </div>
+
+    <div id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+            
+          
+
+          <div id="posts" class="posts-expand">
+            
+  
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/11/15/ECMAScript可执行程序和可执行上下文/">
+                未命名
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-11-15
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/11/15/ECMAScript可执行程序和可执行上下文/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/15/ECMAScript可执行程序和可执行上下文/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <h1 id="ECMAScript可执行程序和可执行上下文">ECMAScript可执行程序和可执行上下文</h1><h3 id="ES5可执行程序">ES5可执行程序</h3><ul>
+<li>全局代码</li>
+<li>eval代码</li>
+<li>函数代码</li>
+</ul>
+<h3 id="ES5可执行上下文">ES5可执行上下文</h3><p>当ECMAScript引擎执行一段ECMAScript程序的时候，进入不同的可执行程序会创建不同的可执行上下文。比如进入全局代码，会创建全局上下文，进入函数代码，会创建函数上下文。其中函数上下文最具有代表性，进入一段函数代码会发生下面的事情：</p>
+<ul>
+<li><p>引擎进入函数代码，<strong>执行前</strong>，建立<strong>函数上下文</strong>：</p>
+<ul>
+<li><p>声明this指向，如果未给函数执行传入this参数，this指向global（浏览器下面就是 window）。</p>
+</li>
+<li><p>创建一个新的<strong>词法环境</strong>，将这个词法环境的<strong>外部词法环境</strong>指向函数的[[scope]]属性，而函数的[[scope]]属性是等于函数<strong>创建时所处环境</strong>的词法环境。</p>
+<p>在这里解释一下<strong>词法环境</strong>（Lexical Environments ）：</p>
+<p>词法环境是一个规范类型（实现规范的内部类型，不是给ECMAScript程序使用的）。词法环境包含两个内容—— <strong>环境记录对象</strong> 和 <strong>外部词法环境</strong>，其中环境记录保存着这个上下文中的变量存储情况，而外部词法环境连向外部的词法环境，在查找变量的适合形成<strong>链式结构</strong>，一步一步向上查找。</p>
+<p>解释一下<strong>环境记录对象</strong>：</p>
+<p>环境记录对象（Environment Records）有两种实现：声明式环境记录(<em>declarative environment records</em>,，下面简称为DER) 对象式环境记录 (<em>object environment records</em>, 下面简称为OER)。其中声明式环境记录会记录包括函数声明、var声明、catch语句等。对象式环境记录包括全局程序(window)和with语句。对象式环境记录可以理解为把变量等信息保存在自己的 <em>binding object</em> 上面，比如 window和with传入的object。 </p>
+<p>DER我们可以理解为保存着当前上下文所需要的变量，包括函数声明、var变量、arguments等。OER我们可以理解为保存着某个对象的变量，比如window对象和with使用的对象。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//这一步我们创建了一个词法环境LE</span><br><span class="line">newLE = &#123;</span><br><span class="line">  DER: &#123;</span><br><span class="line">  	...//存储变量</span><br><span class="line">  &#125;,</span><br><span class="line">  outerLE: function.[[scope]] //指向外部词法环境形成链式结构</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>建立两个变量 <code>LexicalEnvironment</code> 和 <code>VariableEnvironment</code> 都指向上面说的 LE。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LE = newLE; VE = newLE;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>这里为什么需要两个变量指向同一个词法环境对象我们稍后再说，现在先假设他们就是一个东西，这个里面存储了当前函数需要的变量。
+</code></pre><ul>
+<li><p>上下文创建完毕之后，发生<strong>声明绑定实例化(Declaration Binding Instantiation)</strong></p>
+<p>声明绑定实例化就是把函数中的变量放在DER里面，放的顺序依次是 函数声明、形参和var变量。默认var变量都是 undefined</p>
+</li>
+<li><p>代码执行</p>
+<p>代码执行阶段DER中存储的变量值会根据执行的代码被覆盖。其中涉及到<strong>标示符解析</strong>的过程。标示符解析就是变量查找的过程，它会找当前EC的LE，没有再找当前EC的outerEC的LE，一直向上便利。</p>
+<p><strong>LE和VE</strong>的区别：</p>
+<ul>
+<li><p>LE和VE在一开始都等于newLE，就是新创建的词法环境对象。</p>
+</li>
+<li><p>VE用作变量存储，再绑定声明实例化过程中，VE的变量被赋值和存储，LE在大部分时间都等于VE。</p>
+</li>
+<li><p>with语句、catch语句等词法环境种，LE会被赋新的值，从而LE != VE。</p>
+</li>
+<li><p>所以LE是可变的，而VE从创建就一直指向同一个对象。</p>
+</li>
+<li><p>变量查找是找LE，但是变量存储是存在VE上面的。在with语句中，会插入新的LE，让with语句中的变量先查找withObj，但是退出with语句，LE和VE的值又相等了，这就是为什么要设计LE和VE。因为有些情况下，<strong>LE会被赋上新的值改变变量查找的情况</strong>。</p>
+</li>
+<li><p>函数声明解析的[[scope]] = 函数所处环境的VE；函数表达式解析的[[scope]] = 函数所处环境的LE；所以在with语句中，LE变化时，会影响到函数表达式的变量查找。并不会影响到函数声明的变量查找:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在控制台执行这两段脚本</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"> <span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line"> <span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(a)</span><br><span class="line"> &#125; </span><br><span class="line"> <span class="keyword">with</span>(&#123;a:<span class="number">1</span>&#125;) &#123; </span><br><span class="line">   test();</span><br><span class="line"> &#125;</span><br><span class="line">&#125;)();</span><br><span class="line"><span class="comment">//因为with语句的LE会变成 &#123;a:1&#125;,函数声明的[[scope]]是VE不受影响，所以第一个console会</span></span><br><span class="line"><span class="comment">//输出2，但是下面那个LE会受影响，所以变成1</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"> <span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line"> <span class="keyword">with</span>(&#123;a:<span class="number">1</span>&#125;) &#123;</span><br><span class="line">    <span class="keyword">var</span> test = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(a)</span><br><span class="line">    &#125;</span><br><span class="line">   test();</span><br><span class="line"> &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="实例分析">实例分析</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分析下面这段代码的执行过程</span></span><br><span class="line"><span class="built_in">console</span>.log(a);</span><br><span class="line"><span class="built_in">console</span>.log(b);</span><br><span class="line"><span class="built_in">console</span>.log(test);</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">var</span> b = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">a</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(a);</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>) </span>&#123;&#125;;</span><br><span class="line">  <span class="keyword">var</span> a = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;;</span><br><span class="line">&#125;</span><br><span class="line">test(<span class="number">3</span>);</span><br><span class="line">b();</span><br></pre></td></tr></table></figure>
+<p>1 进入全局代码，创建全局上下文：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GEC = &#123;</span><br><span class="line">  <span class="keyword">this</span>: <span class="built_in">window</span>,</span><br><span class="line">  VE: &#123;</span><br><span class="line">    OER: &#123;&#125;, <span class="comment">//全局代码的环境记录是对象式的，binding object是window</span></span><br><span class="line">    outer: <span class="literal">null</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">GEC.LE = GEC.VE;</span><br></pre></td></tr></table></figure>
+<p>2 全局代码声明绑定实例化：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GEC.VE = &#123;</span><br><span class="line">  OER: &#123;</span><br><span class="line">    a: <span class="literal">undefined</span>, <span class="comment">//var a</span></span><br><span class="line">    b: <span class="literal">undefined</span>,</span><br><span class="line">    test: testFun <span class="comment">//这一步还会将函数声明初始化，从而 testFun的 [[scope]] = GEC</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3 依次执行代码:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">console.log(a);//查找GEC.LE.OER.a , 输出 undefined</span><br><span class="line">console.log(b);//查找GEC.LE.OER.b , 输出 undefined</span><br><span class="line">console.log(test);//查找GEC.LE.OER.test , 输出 function test</span><br><span class="line">a = 1; // GEC.LE.OER.a = 1;</span><br><span class="line">b = function...; //发现b会被赋值一个函数，这时候会初始化函数表达式，将b.[[scope]] = GEC</span><br><span class="line">test(3); //进入test函数，所以会创建test函数上下文</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>创建test函数上下文：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">testEC = &#123;</span><br><span class="line">  VE: &#123;</span><br><span class="line">    DER: &#123;&#125;,</span><br><span class="line">    outer: testEC.[[scope]] <span class="comment">//testEC.[[scope]] = GEC </span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>test函数声明绑定实例化：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">testEC = &#123;</span><br><span class="line">  VE: &#123; </span><br><span class="line">    DER&#123;</span><br><span class="line">     a: <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;&#125;, <span class="comment">//根据函数表达式&gt;形参&gt;var 的优先级关系</span></span><br><span class="line">    &#125;</span><br><span class="line">    outer: testEC.[[scope]] <span class="comment">//testEC.[[scope]] = GEC </span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>test函数执行：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(a); <span class="comment">//输出testEC.VE.DER.a</span></span><br><span class="line">a = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;; <span class="comment">//改变a的值</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>test函数执行完毕，可执行上下文回退到GEC</li>
+</ul>
+<p>4 执行b()</p>
+<ul>
+<li><p>创建b函数上下文：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">bEC = &#123;</span><br><span class="line">  VE: &#123;</span><br><span class="line">    DER: &#123;</span><br><span class="line">   	  <span class="comment">//为空，没有变量</span></span><br><span class="line">	&#125;,</span><br><span class="line">    outer: bEC.[[scope]] <span class="comment">// = GEC</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>b函数声明绑定实例化，由于没有变量，跳过此步骤</p>
+</li>
+<li><p>b函数执行console.log(a); 查找 <code>bEC.VE.DER.a</code> 没有，然后找bEC.VE.outer , 就是GEC， GEC有变量a = 1; 所以输出 a = 1; </p>
+</li>
+</ul>
+
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/11/02/声明/">
+                声明
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-11-02
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/11/02/声明/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/02/声明/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <h1 id="声明">声明</h1><p><strong>最近我写的一篇文章<a href="http://liyangready.github.io/2015/08/14/nodejs%E7%9C%9F%E7%9A%84%E6%98%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%90%97%EF%BC%9F/">nodejs真的是单线程吗？</a>在微博上看到被山寨,此文章初次发表于几个月前(2015-08-14)，当时理解并不全面，文中存在理解有误的地方，所以未想到公开传播，然而淘宝ued在未经过我同意的情况下发表到他们的博客下面(2015-10-29)，呵呵，以此带来的误导与我无关，等有时间我会重新整理，淘宝侵权链接：<a href="http://taobaofed.org/blog/2015/10/29/deep-into-node-1/" target="_blank" rel="external">Node.js 探秘（一）- 初识单线程的 Node.js</a> 由于一些原因，这次我不追究，希望以后大家能够尊重版权，谢谢！</strong></p>
+
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/09/16/nodejs源码-http-server/">
+                nodejs源码-http server
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-09-16
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/09/16/nodejs源码-http-server/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/16/nodejs源码-http-server/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <pre>
+var http = require('http');
+http.createServer(function(req, res) {
+  res.write('ok');
+  res.end();
+}).listen(3000);
+</pre>
+
+<p>本文主要想探索一下上面这段代码在nodejs内部到底发生了什么？</p>
+<h2 id="http-createServer">http.createServer</h2><p>nodejs源码在github上面，其中js部分源码存在了 node/lib 目录下。我们先看 http 模块的代码。<br><code>node/lib/http.js</code>:   </p>
+<pre>
+const server = require('_http_server');
+...
+const Server = exports.Server = server.Server;
+...
+exports.createServer = function(requestListener) {
+  return new Server(requestListener);
+};
+</pre> 
+
+<p>可以清楚的看出，createServer返回了一个Server的实例，然后将用户的回调传递进去，Server来自<code>node/lib/_http_server_</code>：</p>
+<pre>
+function Server(requestListener) {
+  if (!(this instanceof Server)) return new Server(requestListener);
+  net.Server.call(this, { allowHalfOpen: true });
+  if (requestListener) {
+    this.addListener('request', requestListener);
+  }
+  this.httpAllowHalfOpen = false;
+  this.addListener('connection', connectionListener);
+  this.addListener('clientError', function(err, conn) {...});
+  this.timeout = 2 * 60 * 1000;
+}
+util.inherits(Server, net.Server);
+</pre>
+从上面代码可以看出，Server会继承net.Server，同时自己增加了 httpAllowHalfOpen(用到再说) 和默认的超时时间(2min)，绑定了三个事件(onrequest-即用户在createServer传递的事件、onconnection和onclientError);
+先不管事件，继续看 net.Server,位于`node/lib/net.js`:
+
+<pre>
+function Server(options, connectionListener) {
+  // options: { allowHalfOpen: true }, connectionListener: undefined
+  ...
+  events.EventEmitter.call(this); //继承事件，让server拥有事件能力
+  ...
+ this._connections = 0;
+ //这一段定义connections了connections，标记其get set时候都不能被外部使用，否则打印一个warning
+ Object.defineProperty(this, 'connections', {
+    get: internalUtil.deprecate(function() {
+      if (self._usingSlaves) {
+        return null;
+      }
+      return self._connections;
+    }, 'Server.connections property is deprecated. ' +
+       'Use Server.getConnections method instead.'),
+    set: internalUtil.deprecate(function(val) {
+      return (self._connections = val);
+    }, 'Server.connections property is deprecated.'),
+    configurable: true, enumerable: false
+  });
+
+  this._handle = null;
+  this._usingSlaves = false;
+  this._slaves = [];
+  this._unref = false;
+
+  this.allowHalfOpen = options.allowHalfOpen || false;
+  this.pauseOnConnect = !!options.pauseOnConnect;
+  //---------调用结束---------
+}
+util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事件能力
+</pre>
+由上，实际上net.Server不过是定义了一堆变量挂在自己身上，因此 http Server也挂了这些属性到this上面。到此，createServer其实已经结束了。
+            <div class="post-more-link text-center">
+              <a class="btn" href="/2015/09/16/nodejs源码-http-server/#more">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/08/14/nodejs真的是单线程吗？/">
+                nodejs真的是单线程吗？
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-08-14
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/08/14/nodejs真的是单线程吗？/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/14/nodejs真的是单线程吗？/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <h1 id="问题由来">问题由来</h1><p>事件驱动、异步、单线程、非阻塞I/O，这是我们听得最多的关于nodejs的介绍，连nodejs官网都是这么写的：</p>
+<blockquote>
+<p>Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.</p>
+</blockquote>
+<p>过去很长时间里，我都愿意接受这些“耳熟能详”的观点，直到最近，遇到过很多性能问题之后，我才开始思考，nodejs的内部机制到底是怎样的，nodejs的性能瓶颈在哪里？</p>
+<p>#问题</p>
+<ul>
+<li>nodejs既然是单线程，如何实现异步I/O？ </li>
+<li>nodejs如何实现非阻塞I/O的？</li>
+<li>nodejs事件驱动是如何实现的？</li>
+<li>nodejs全是异步调用和非阻塞I/O，就真的不用管并发数了吗？</li>
+<li>nodejs如何靠js和操作系统打交道的？</li>
+</ul>
+            <div class="post-more-link text-center">
+              <a class="btn" href="/2015/08/14/nodejs真的是单线程吗？/#more">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/nodejs/">
+                #nodejs
+              </a>
+            
+          </div>
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/08/10/promise相关/">
+                promise相关
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-08-10
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/08/10/promise相关/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/10/promise相关/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <h1 id="基本使用">基本使用</h1><p><em>以ES6的 promise 为准。</em><br>在处理一个异步操作时，如果希望通过promise来实现，我们只需要两步：  </p>
+<ul>
+<li>封装一个promise对象  <pre>
+  function someSyncFn() {
+    return new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        console.log("after 2s");
+        resolve(2000);
+      }, 2000);
+    })
+  }
+  </pre></li>
+<li>调用then方法  <pre>
+  someSyncFn().then(function(value) {
+      console.log("getValue:" + value);
+  });
+  </pre>
+
+</li>
+</ul>
+            <div class="post-more-link text-center">
+              <a class="btn" href="/2015/08/10/promise相关/#more">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/promise/">
+                #promise
+              </a>
+            
+          </div>
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
+
+          </div>
+
+          
+            <div class="pagination">
+              <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">&raquo;</a>
+            </div>
+          
+        </div>
+
+        
+<div class="sidebar-toggle">
+  <div class="sidebar-toggle-line-wrap">
+    <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+    <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+  </div>
+</div>
+
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-inner">
+
+    
+
+    <div class="site-overview">
+      <div class="site-author motion-element">
+        <img class="site-author-image" src="/images/default_avatar.jpg" alt="leon.li" />
+        <p class="site-author-name">leon.li</p>
+      </div>
+      <p class="site-description motion-element"></p>
+      <div class="site-state motion-element">
+        <div class="site-state-item site-state-posts">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </div>
+        <div class="site-state-item site-state-tags">
+            <span class="site-state-item-count">10</span>
+            <span class="site-state-item-name">标签</span>
+        </div>
+        <div class="site-state-item site-state-pages">
+            <span class="site-state-item-count">1</span>
+            <span class="site-state-item-name">页面</span>
+        </div>
+      </div>
+
+      
+
+      <div class="social-info motion-element">
+        
+      </div>
+
+    </div>
+
+    
+  </div>
+</div>
+
+
+      </div>
+    </div>
+
+    <div id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; &nbsp; 
+  2015
+  <span class="with-love">
+    <i class="icon-heart"></i>
+  </span>
+  <span class="author">leon.li</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 - <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT</a>
+</div>
+
+
+
+
+
+      </div>
+    </div>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".fancybox").fancybox();
+    });
+  </script>
+
+  <script type="text/javascript">
+  function hasMobileUA () {
+    var nav = window.navigator;
+    var ua = nav.userAgent;
+    var pa = /iPad|iPhone|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g;
+
+    return pa.test(ua);
+  }
+
+  function isDesktop () {
+    return screen.width > 991 && !hasMobileUA();
+  }
+
+  function isTablet () {
+    return screen.width < 992 && screen.width > 767 && hasMobileUA();
+  }
+
+  function isMobile () {
+    return screen.width < 767 && hasMobileUA();
+  }
+
+  function escapeSelector (selector) {
+    return selector.replace(/[!"$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+  }
+</script>
+
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  
+  <script type="text/javascript" id="motion.page.home">
+    $(document).ready(function () {
+      $.Velocity.RunSequence([
+        { e: $('.brand'), p: { opacity: 1 }, o: { duration: 100 } },
+        { e: $('.logo'), p: { opacity: 1, top: 0 }, o: { duration: 50} },
+        { e: $('.site-title'), p: { opacity: 1, top: 0 }, o: { duration: 200, sequenceQueue: false } }
+      ]);
+      $('.menu-item').velocity('transition.slideDownIn', {display: null});
+    });
+  </script>
+
+
+  <script type="text/javascript" id="motion.global">
+  $(document).ready(function () {
+    var body = $('body');
+    var isSidebarVisible = false;
+    var sidebarToggle = $('.sidebar-toggle');
+    var sidebarToggleLine1st = $('.sidebar-toggle-line-first')
+    var sidebarToggleLine2nd = $('.sidebar-toggle-line-middle');
+    var sidebarToggleLine3rd = $('.sidebar-toggle-line-last');
+    var sidebar = $('.sidebar');
+
+    var SIDEBAR_WIDTH = '320px';
+    var SIDEBAR_DISPLAY_DURATION = 300;
+
+    var sidebarToogleLineStatusInit = {width: '100%', opacity: 1, left: 0, rotateZ: 0, top: 0};
+
+    var sidebarToggleLine1stStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine1stStatusArrow = {width: '50%', rotateZ: '-45deg', top: '2px'};
+    var sidebarToogleLine1stStatusClose = {width: '100%', rotateZ: '-45deg', top: '5px'};
+
+    var sidebarToggleLine2ndStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine2ndStatusArrow = {width: '90%'};
+    var sidebarToogleLine2ndStatusClose = {opacity: 0};
+
+    var sidebarToggleLine3rdStatusInit = sidebarToogleLineStatusInit;
+    var sidebarToggleLine3rdStatusArrow = {width: '50%', rotateZ: '45deg', top: '-2px'};
+    var sidebarToogleLine3rdStatusClose = {width: '100%', rotateZ: '45deg', top: '-5px'};
+
+    sidebatToggleMotion();
+    postsListMotion();
+    backToTopMotion();
+
+
+    $(document)
+      .on('sidebar.isShowing', function () {
+        isDesktop() && body.velocity(
+          {paddingRight: SIDEBAR_WIDTH},
+          SIDEBAR_DISPLAY_DURATION
+        );
+        sidebarContentMotion();
+      })
+      .on('sidebar.isHiding', function () {});
+
+
+    function backToTopMotion () {
+      var b2top = $('.back-to-top');
+      b2top.on('click', function () {
+        body.velocity('scroll');
+      });
+    }
+
+    function sidebarShowMotion () {
+
+      sidebarToggleLine1st.velocity(sidebarToogleLine1stStatusClose);
+      sidebarToggleLine2nd.velocity(sidebarToogleLine2ndStatusClose);
+      sidebarToggleLine3rd.velocity(sidebarToogleLine3rdStatusClose);
+
+      sidebar.velocity({width: SIDEBAR_WIDTH}, {
+        duration: SIDEBAR_DISPLAY_DURATION,
+        complete: function () {
+          sidebar.addClass('sidebar-active');
+          sidebar.trigger('sidebar.didShow');
+        }
+      });
+      sidebar.trigger('sidebar.isShowing');
+    }
+
+    function sidebarHideMotion () {
+      isDesktop() && body.velocity({paddingRight: 0});
+      sidebar.velocity('reverse');
+
+      sidebarToggleLine1st.velocity(sidebarToggleLine1stStatusInit);
+      sidebarToggleLine2nd.velocity(sidebarToggleLine2ndStatusInit);
+      sidebarToggleLine3rd.velocity(sidebarToggleLine3rdStatusInit);
+
+      sidebar.removeClass('sidebar-active');
+      sidebar.trigger('sidebar.isHiding');
+    };
+
+    function sidebarContentMotion () {
+      $('.sidebar .motion-element').velocity(
+        'transition.slideRightIn',
+        {stagger: 50, drag: true}
+      );
+    }
+
+    function postsListMotion () {
+      $('.post').velocity('transition.slideDownIn', {stagger: 300, drag: true});
+    }
+
+    function sidebatToggleMotion () {
+      sidebarToggle.on('click', function () {
+        isSidebarVisible ? sidebarHideMotion() : sidebarShowMotion();
+        isSidebarVisible = !isSidebarVisible;
+      });
+
+      sidebarToggle.hover(function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusArrow);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusArrow);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusArrow);
+      }, function () {
+        if (isSidebarVisible) {return}
+        sidebarToggleLine1st.velocity('stop').velocity(sidebarToggleLine1stStatusInit);
+        sidebarToggleLine2nd.velocity('stop').velocity(sidebarToggleLine2ndStatusInit);
+        sidebarToggleLine3rd.velocity('stop').velocity(sidebarToggleLine3rdStatusInit);
+      });
+    }
+  });
+
+</script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"liyangready"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+  
+</body>
+</html>
