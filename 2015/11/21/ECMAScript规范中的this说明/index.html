@@ -18,9 +18,19 @@
 
 
 
-	<meta name="keywords" content="规范," />
 
-  <title> ECMASCript规范关于this的说明 // liyangready's blog </title>
+    <meta name="keywords" content="Hexo,next" />
+
+
+
+
+
+    <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.3.0rc5" />
+
+
+
+
+  <title>  // liyangready's blog </title>
 </head>
 
 <body>
@@ -90,7 +100,7 @@
           
           
             
-              ECMASCript规范关于this的说明
+              
             
           
         </h1>
@@ -122,13 +132,17 @@
         
 
         
-          <p>javascript中的this一直是很多初学者搞不清的地方，最后总结出各种‘经验’，我们还是从原理出发，看看官方规范是怎么解释this这件事情的。</p>
+          <p>layout: title</p>
+<p>title: “ECMASCript规范关于this的说明”</p>
+<p>date: 2015-11-21 11:49:10</p>
+<h2 id="tags:_规范">tags: 规范</h2><p>javascript中的this一直是很多初学者搞不清的地方，最后总结出各种‘经验’，我们还是从原理出发，看看官方规范是怎么解释this这件事情的。</p>
 <h3 id="全局代码">全局代码</h3><p><a href="http://es5.github.io/#x10.4.1" target="_blank" rel="external">规范</a> , this 指向 Global Environment 就是 window，这点大家都知道了，没什么好解释的。</p>
 <h3 id="函数代码">函数代码</h3><p><a href="http://es5.github.io/#x10.4.3" target="_blank" rel="external">规范</a>如是说：</p>
 <blockquote>
 <p>The following steps are performed when control enters the execution context for <a href="http://es5.github.io/#function-code" target="_blank" rel="external">function code</a> contained in function object <em>F</em>, a caller provided <em>thisArg</em>, and a caller provided <em>argumentsList</em>:</p>
 </blockquote>
-<p>从上面可以获取到，在执行函数代码时，this作为参数，是由调用者提供的，我们看调用的时候this是如何传递进去的。<br><a id="more"></a></p>
+<p>从上面可以获取到，在执行函数代码时，this作为参数，是由调用者提供的，我们看调用的时候thisArg是如何传递进去的。</p>
+<a id="more"></a>
 <p><a href="http://es5.github.io/#x11.2.3" target="_blank" rel="external">function call</a></p>
 <blockquote>
 <p>The production <em>CallExpression</em> <strong>:</strong> <em>MemberExpression</em> <em>Arguments</em> is evaluated as follows:</p>
@@ -295,6 +309,13 @@
 </tr>
 </tbody>
 </table>
+<h3 id="注意：">注意：</h3><p>上面说的 thisValue = undefined； 是指的最后函数可执行上下文执行函数调用时候的 thisArg ， 规范有一句话是：</p>
+<blockquote>
+<ol>
+<li>Else if <em>thisArg</em> is <strong>null</strong> or <strong>undefined</strong>, set the ThisBinding to the <a href="http://es5.github.io/#x15.1" target="_blank" rel="external">global object</a>.</li>
+</ol>
+</blockquote>
+<p>如果<strong>thisArg 是 undefined，最后代码运行中的this绑定是 全局对象。</strong></p>
 <h3 id="参考资料：">参考资料：</h3><p><a href="http://perfectionkills.com/know-thy-reference/" target="_blank" rel="external">http://perfectionkills.com/know-thy-reference/</a></p>
 <p><a href="http://es5.github.io/#x10.4.1.1" target="_blank" rel="external">http://es5.github.io/#x10.4.1.1</a></p>
 
@@ -304,14 +325,6 @@
 
     
       <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/规范/">
-                #规范
-              </a>
-            
-          </div>
         
 
         
@@ -340,7 +353,7 @@
     <div class="comments" id="comments">
       
         <div class="ds-thread" data-thread-key="2015/11/21/ECMAScript规范中的this说明/"
-             data-title="ECMASCript规范关于this的说明" data-url="http://liyangready.github.io/2015/11/21/ECMAScript规范中的this说明/">
+             data-title="" data-url="http://liyangready.github.io/2015/11/21/ECMAScript规范中的this说明/">
         </div>
 
       
@@ -406,7 +419,7 @@
 
     
       <div class="post-toc sidebar-panel-active">
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#全局代码"><span class="nav-number">1.</span> <span class="nav-text">全局代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数代码"><span class="nav-number">2.</span> <span class="nav-text">函数代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#规律"><span class="nav-number">3.</span> <span class="nav-text">规律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#统计"><span class="nav-number">4.</span> <span class="nav-text">统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料："><span class="nav-number">5.</span> <span class="nav-text">参考资料：</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tags:_规范"><span class="nav-number">1.</span> <span class="nav-text">tags: 规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#全局代码"><span class="nav-number">1.1.</span> <span class="nav-text">全局代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数代码"><span class="nav-number">1.2.</span> <span class="nav-text">函数代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#规律"><span class="nav-number">1.3.</span> <span class="nav-text">规律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#统计"><span class="nav-number">1.4.</span> <span class="nav-text">统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意："><span class="nav-number">1.5.</span> <span class="nav-text">注意：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料："><span class="nav-number">1.6.</span> <span class="nav-text">参考资料：</span></a></li></ol></li></ol>
       </div>
     
   </div>
