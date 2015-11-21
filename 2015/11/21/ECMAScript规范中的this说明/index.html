@@ -18,9 +18,9 @@
 
 
 
-	<meta name="keywords" content="promise," />
+	<meta name="keywords" content="规范," />
 
-  <title> promise相关 // liyangready's blog </title>
+  <title> ECMASCript规范关于this的说明 // liyangready's blog </title>
 </head>
 
 <body>
@@ -90,7 +90,7 @@
           
           
             
-              promise相关
+              ECMASCript规范关于this的说明
             
           
         </h1>
@@ -99,15 +99,15 @@
       <div class="post-meta">
           <span class="post-time">
             
-              发表于 2015-08-10
+              发表于 2015-11-21
             
           </span>
         
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/08/10/promise相关/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/10/promise相关/"></span>
+            <a href="/2015/11/21/ECMAScript规范中的this说明/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/21/ECMAScript规范中的this说明/"></span>
             </a>
           </span>
           
@@ -122,172 +122,181 @@
         
 
         
-          <h1 id="基本使用">基本使用</h1><p><em>以ES6的 promise 为准。</em><br>在处理一个异步操作时，如果希望通过promise来实现，我们只需要两步：  </p>
-<ul>
-<li>封装一个promise对象  <pre>
-  function someSyncFn() {
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        console.log("after 2s");
-        resolve(2000);
-      }, 2000);
-    })
-  }
-  </pre></li>
-<li>调用then方法  <pre>
-  someSyncFn().then(function(value) {
-      console.log("getValue:" + value);
-  });
-  </pre>
-
-</li>
-</ul>
-<a id="more"></a>
-<p>单从上述方法其实并不能看出来promise的优势，一个callback改成了一个then而已，我们看多个异步操作的情况:</p>
-<pre>
-  function someSyncFn1() {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-          console.log("after 2s");
-          resolve(2000);
-        }, 2000);
-      })
-  }
-  function someSyncFn2(value1) {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-              console.log("after 5s");
-              resolve(3000 + value1);
-        }, 3000);
-      })
-  }
-  someSyncFn1().then(someSyncFn2).then(function(value) {
-    console.log("getValue:" + value);
-  });
-</pre>
-我们发现，当链式异步并且存在先后顺序的时候，通过promise的确能够写出更简洁的代码，而且并不需要很多api，和单个异步一样，只需要两步，封装promise对象和调用then方法。
-
-对于平行的异步调用，promise提供了 promise.all
-<pre>
-function someSyncFn1() {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-          console.log("after 2s");
-          resolve(2000);
-        }, 2000);
-      })
-  }
-  function someSyncFn2() {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-              console.log("after 5s");
-              resolve(3000);
-        }, 3000);
-      })
-  }
-Promise.all([someSyncFn1(), someSyncFn2()]).then(function(results) {
-    console.log(results);
-});
-</pre>
-上面的 results会顺序保存 两个异步的结果。
-
-# 问题
-
-从上面的基本用法，我们可能会觉得 promise 非常简单，但是我经常看到各种奇怪的写法，有好的也有反模式，我发现并不能弄懂它们的区别。比如：
-
-+ then中直接调用方法
-<pre>
-
-  function someSyncFn1() {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-          console.log("after 2s");
-          resolve(2000);
-        }, 2000);
-      })
-  }
-  function someSyncFn2(value1) {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-              console.log("after 5s");
-              resolve(3000 + value1);
-        }, 3000);
-      })
-  }
-  someSyncFn1().then(function(value) {
-    someSyncFn2(value); // 在then中直接调用 第二个异步函数
-  }).then(function(value) {
-    console.log("getValue:" + value);
-  });
-</pre>
-
-<ul>
-<li>then中返回一个值</li>
-</ul>
-<pre>
-  function someSyncFn1() {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-          console.log("after 2s");
-          resolve(2000);
-        }, 2000);
-      })
-  }
-
-  someSyncFn1().then(function(value) {
-    console.log('async console');
-    return value; //在then中返回值
-  }).then(function(value) {
-    console.log("getValue:" + value);
-  });
-</pre>
-
-<ul>
-<li><p>一个异步之后需要多个回调的两种写法的区别：</p>
-<pre>
-//写法1
-someSyncFn1().then(callback1).then(callback2); 
-//写法2
-var promiseRt = someSyncFn1();
-promiseRt.then(callback1);
-promiseRt.then(callback2); 
-
-//是否写法1 是串行，写法2是 并行呢？ 
-</pre>
-</li>
-<li><p>以及更经典的，下面四种写法区别在哪里：<br><pre><br>doSomething().then(function () {<br>  return doSomethingElse();<br>})；</pre></p>
-</li>
-</ul>
-<p>doSomethin().then(functiuoin () {<br>    doSomethingElse();<br>});</p>
-<p>doSomething().then(doSomethingElse());</p>
-<p>doSomething().then(doSomethingElse);<br></p>
-<p>我们发现上面的执行结果乱七八糟，如果不能了解 promise内部执行流程，很难回答上面的问题，于是我们看一下官方规范到底是怎样的。</p>
-<h1 id="promiseA+规范">promiseA+规范</h1><p>promiseA+规范从规范的角度解释了promise的行为，其规范并不长，由于已经有一篇质量不错的翻译，这里就直接贴上引用：<br><a href="http://segmentfault.com/a/1190000002452115" target="_blank" rel="external">Promise/A+规范</a></p>
-<p>在规范中值得关注的几点：</p>
+          <p>javascript中的this一直是很多初学者搞不清的地方，最后总结出各种‘经验’，我们还是从原理出发，看看官方规范是怎么解释this这件事情的。</p>
+<h3 id="全局代码">全局代码</h3><p><a href="http://es5.github.io/#x10.4.1" target="_blank" rel="external">规范</a> , this 指向 Global Environment 就是 window，这点大家都知道了，没什么好解释的。</p>
+<h3 id="函数代码">函数代码</h3><p><a href="http://es5.github.io/#x10.4.3" target="_blank" rel="external">规范</a>如是说：</p>
 <blockquote>
-<p>then 必须返回一个promise.</p>
-<p><code>promise2 = promise1.then(onFulfilled, onRejected);</code></p>
-<ul>
-<li>如果onFulfilled 或 onRejected 返回了值x, 则执行Promise 解析流程<a href="promise2, x">[Resolve]</a>.</li>
-<li>如果onFulfilled 或 onRejected抛出了异常e, 则promise2应当以e为reason被拒绝。</li>
-<li>如果 onFulfilled 不是一个函数且promise1已经fulfilled，则promise2必须以promise1的值fulfilled.</li>
-<li>如果 OnReject 不是一个函数且promise1已经rejected, 则promise2必须以相同的reason被拒绝.</li>
-</ul>
+<p>The following steps are performed when control enters the execution context for <a href="http://es5.github.io/#function-code" target="_blank" rel="external">function code</a> contained in function object <em>F</em>, a caller provided <em>thisArg</em>, and a caller provided <em>argumentsList</em>:</p>
 </blockquote>
-<p>以及<a href="http://segmentfault.com/a/1190000002452115#articleHeader4" target="_blank" rel="external">解析流程</a></p>
-<p>由此可见，不管给promise.then()传递怎样的实参，最终都会返回一个新的promise对象，而接下来如果链式调用then方法实际上是绑定在了这个新生成的promise对象上面。<br>我们日常书写的存在疑虑的部分大都是在 <code>then</code> 的返回值上面，可能会有几种写法：</p>
+<p>从上面可以获取到，在执行函数代码时，this作为参数，是由调用者提供的，我们看调用的时候this是如何传递进去的。<br><a id="more"></a></p>
+<p><a href="http://es5.github.io/#x11.2.3" target="_blank" rel="external">function call</a></p>
+<blockquote>
+<p>The production <em>CallExpression</em> <strong>:</strong> <em>MemberExpression</em> <em>Arguments</em> is evaluated as follows:</p>
+<ol>
+<li>Let <em>ref</em> be the result of evaluating <em>MemberExpression</em>.</li>
+<li>Let <em>func</em> be <a href="http://es5.github.io/#x8.7.1" target="_blank" rel="external">GetValue</a>(<em>ref</em>).</li>
+<li>Let <em>argList</em> be the result of evaluating <em>Arguments</em>, producing an internal list of argument values (see<a href="http://es5.github.io/#x11.2.4" target="_blank" rel="external">11.2.4</a>).</li>
+<li>If <a href="http://es5.github.io/#Type" target="_blank" rel="external">Type</a>(<em>func</em>) is not Object, throw a <strong>TypeError</strong> exception.</li>
+<li>If <a href="http://es5.github.io/#x9.11" target="_blank" rel="external">IsCallable</a>(<em>func</em>) is <strong>false</strong>, throw a <strong>TypeError</strong> exception.</li>
+<li><strong>If <a href="http://es5.github.io/#Type" target="_blank" rel="external">Type</a>(<em>ref</em>) is <a href="http://es5.github.io/#x8.7" target="_blank" rel="external">Reference</a>, then</strong><ol>
+<li>If <a href="http://es5.github.io/#IsPropertyReference" target="_blank" rel="external">IsPropertyReference</a>(<em>ref</em>) is <strong>true</strong>, then**<ol>
+<li><strong>Let <em>thisValue</em> be <a href="http://es5.github.io/#GetBase" target="_blank" rel="external">GetBase</a>(<em>ref</em>).</strong></li>
+</ol>
+</li>
+<li>Else, the base of <em>ref</em> is an <a href="http://es5.github.io/#x10.2.1" target="_blank" rel="external">Environment Record</a><ol>
+<li>Let <em>thisValue</em> be the result of calling the ImplicitThisValue concrete method of <a href="http://es5.github.io/#GetBase" target="_blank" rel="external">GetBase</a>(ref).</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Else, <a href="http://es5.github.io/#Type" target="_blank" rel="external">Type</a>(<em>ref</em>) is not <a href="http://es5.github.io/#x8.7" target="_blank" rel="external">Reference</a>.<ol>
+<li>Let <em>thisValue</em> be <strong>undefined</strong>.</li>
+</ol>
+</li>
+<li>Return the result of calling the [[Call]] internal method on <em>func</em>, providing <em>thisValue</em> as the <strong>this</strong> value and providing the list <em>argList</em> as the argument values.</li>
+</ol>
+</blockquote>
+<p>看上面第6点，写的很清楚，在函数调用的时候，如果调用的是reference类型，那么this指向GetBase(ref). 要搞清楚这个问题，就要先看看reference到底是个啥。</p>
+<p><a href="http://es5.github.io/#x8.7" target="_blank" rel="external">reference type</a></p>
+<p>reference是一个规范类型，也就是说是为了解释规范某些行为而存在的，比如delete、typeof、赋值语句等。一个reference是用来解释标示符绑定的，它由3部分组成，<strong>base</strong>、<strong>referenced name</strong> 和 用来标示 是否为严格模式的  <strong>strict reference</strong>  flag.</p>
+<p>base就是记录reference的依赖项，referenced name很好理解就是引用名称。既然是个规范类型，也没有太多的经验可以遵循，关于 base、referenced name的值我们都应该根据规范定义来判断。</p>
+<p>我们举几个例子：</p>
 <ul>
-<li>return undefined或者一个值</li>
-<li>return 一个promise</li>
-<li>throw 一个error</li>
+<li>比如根据规范定义，标示符引用会返回一个reference  ，它的base是是一个环境记录项：</li>
 </ul>
-<p>return undefined或者一个值的时候，新的promise对象将会以x为值 fulfill 从而直接触发了接下来的then方法并且把 这个值传递过去。</p>
-<p>return 一个promise后，新生成的promise2将会等待这个返回的promise状态从 pending-resolve或者reject的过程，以它的状态来 fulfill或者rejects 自己的回调。 如果promise已经成功或者失败了，它也直接使用return的promise的值来触发自己的then方法。</p>
-<h1 id="分析">分析</h1><p>对于之前的问题：</p>
-<p>1 then中直接调用方法，不管这个方法是同步的还是异步的，只要其没有显示的使用return，js默认return了undefined，按照上述规范描述，将会直接触发接下来的then方法，并且将undefined作为值传递下去。</p>
-<p>2 then中return了一个值，同1.</p>
-<p>3 写法1和写法2都是并行，因为写法1属于返回一个 undefined的情况，链式then方法都会被执行，并不会等待。另外，写法1的then方法是挂在不同的promise对象上，写法2是挂在同一个上面。</p>
-<p>4 <a href="http://efe.baidu.com/blog/promises-anti-pattern/?utm_source=tuicool" target="_blank" rel="external">谈谈使用 promise 时候的一些反模式</a></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// when foo is defined earlier</span></span><br><span class="line">foo;</span><br><span class="line"><span class="comment">// creates (in abstract code)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Reference = &#123;</span><br><span class="line">  base: EnvironmentRecord,</span><br><span class="line">  name: <span class="string">"foo"</span>,</span><br><span class="line">  strict: <span class="literal">false</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>所以如果调用 foo(); 根据上面的规范说明：</p>
+<blockquote>
+<p>Else, the base of <em>ref</em> is an <a href="http://es5.github.io/#x10.2.1" target="_blank" rel="external">Environment Record</a></p>
+<ol>
+<li>Let <em>thisValue</em> be the result of calling the ImplicitThisValue concrete method of <a href="http://es5.github.io/#GetBase" target="_blank" rel="external">GetBase</a>(ref).</li>
+</ol>
+</blockquote>
+<p>会走到这个else里面，于是，this的值等于环境记录的隐式this值，又有规范说了</p>
+<blockquote>
+<p> ImplicitThisValue is <a href="https://es5.github.io/#x10.2.1.1.6" target="_blank" rel="external">always set to <code>undefined</code></a></p>
+</blockquote>
+<p>隐式this永远指向 undefined，所以 foo(); 执行的时候 this = undefined;</p>
+<ul>
+<li>再比如一个对象的属性访问也会返回一个 reference：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">foo.bar;</span><br><span class="line"></span><br><span class="line"><span class="comment">// creates (in abstract code)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Reference = &#123;</span><br><span class="line">  base: foo,</span><br><span class="line">  name: <span class="string">"bar"</span>,</span><br><span class="line">  strict: <span class="literal">false</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>那么 foo.bar(); 执行时根据上面的规范，会走到这个 if 中：</p>
+<blockquote>
+<p>If <a href="http://es5.github.io/#IsPropertyReference" target="_blank" rel="external">IsPropertyReference</a>(<em>ref</em>) is <strong>true</strong>, then**</p>
+<ol>
+<li><strong>Let thisValue</strong> be <a href="http://es5.github.io/#GetBase" target="_blank" rel="external">GetBase</a>(<em>ref</em>).</li>
+</ol>
+</blockquote>
+<p>于是真相大白，此时 this = GetBase(ref) = foo;</p>
+<h3 id="规律">规律</h3><p>由上面的情况我们得知，如何判断一个 this 指向，关键在于函数调用的时候，括号左边的表达式是否是一个 reference 对象，我们只需要查找规范判断这个，任何this问题都能搞定，比如很奇葩的这种 (f = foo.bar)() ， this情况如何计算？</p>
+<p>我们需要去查找 <strong>赋值语句</strong> 的规范：</p>
+<blockquote>
+<ol>
+<li>Let lref be the result of evaluating LeftHandSideExpression.</li>
+<li>Let rref be the result of evaluating AssignmentExpression.</li>
+<li><strong>Let rval be GetValue(rref).</strong></li>
+<li>Throw a SyntaxError exception if the following conditions are all true:<ul>
+<li>Type(lref) is Reference is true</li>
+<li>IsStrictReference(lref) is true</li>
+<li>Type(GetBase(lref)) is Environment Record</li>
+<li>GetReferencedName(lref) is either “eval” or “arguments”</li>
+</ul>
+</li>
+<li>Call PutValue(lref, rval).</li>
+<li>Return rval.</li>
+</ol>
+</blockquote>
+<p>看第3 行，结果返回的是 rval，rval又是经过 GetValue 函数求值，从而 foo.bar 本身是一个reference，求值之后变成了一个普通的 object，再套到之前的规范公式，不是reference，this = undefined.</p>
+<p>同理，假设是 <code>(1 , foo.bar)()</code>，只需要看 逗号表达式会返回什么？</p>
+<blockquote>
+<ol>
+<li>Let lref be the result of evaluating Expression.</li>
+<li>Call GetValue(lref).</li>
+<li>Let rref be the result of evaluating AssignmentExpression.</li>
+<li><strong>Return GetValue(rref).</strong></li>
+</ol>
+</blockquote>
+<p>发现和赋值语句一样，所以结果 this = undefined;</p>
+<h3 id="统计">统计</h3><p>有大牛统计的表格，关于常见 javascript语句是否会返回reference：</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Reference?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“foo”</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>123</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>/x/</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>({})</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>(function(){})</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>foo</td>
+<td>Yes</td>
+<td>Could be unresolved reference if <code>foo</code> is not defined</td>
+</tr>
+<tr>
+<td>foo.bar</td>
+<td>Yes</td>
+<td>Property reference</td>
+</tr>
+<tr>
+<td>(123).toString</td>
+<td>Yes</td>
+<td>Property reference</td>
+</tr>
+<tr>
+<td>(function(){}).toString</td>
+<td>Yes</td>
+<td>Property reference</td>
+</tr>
+<tr>
+<td>(1,foo.bar)</td>
+<td>No</td>
+<td>Already evaluated, BUT see grouping operator exception</td>
+</tr>
+<tr>
+<td>(f = foo.bar)</td>
+<td>No</td>
+<td>Already evaluated, BUT see grouping operator exception</td>
+</tr>
+<tr>
+<td>(foo)</td>
+<td>Yes</td>
+<td>Grouping operator does not evaluate reference</td>
+</tr>
+<tr>
+<td>(foo.bar)</td>
+<td>Yes</td>
+<td>Ditto with property reference</td>
+</tr>
+</tbody>
+</table>
+<h3 id="参考资料：">参考资料：</h3><p><a href="http://perfectionkills.com/know-thy-reference/" target="_blank" rel="external">http://perfectionkills.com/know-thy-reference/</a></p>
+<p><a href="http://es5.github.io/#x10.4.1.1" target="_blank" rel="external">http://es5.github.io/#x10.4.1.1</a></p>
 
         
       </div>
@@ -298,8 +307,8 @@ promiseRt.then(callback2);
         
           <div class="post-tags">
             
-              <a href="/tags/promise/">
-                #promise
+              <a href="/tags/规范/">
+                #规范
               </a>
             
           </div>
@@ -309,13 +318,11 @@ promiseRt.then(callback2);
           <div class="post-nav">
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2015/08/14/nodejs真的是单线程吗？/">nodejs真的是单线程吗？</a>
-              
             </div>
 
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2015/08/08/async源码解析/">async源码解析</a>
+                <a href="/2015/11/15/ECMAScript可执行程序和可执行上下文/">ECMAScript代码执行过程</a>
               
             </div>
           </div>
@@ -332,8 +339,8 @@ promiseRt.then(callback2);
   
     <div class="comments" id="comments">
       
-        <div class="ds-thread" data-thread-key="2015/08/10/promise相关/"
-             data-title="promise相关" data-url="http://liyangready.github.io/2015/08/10/promise相关/">
+        <div class="ds-thread" data-thread-key="2015/11/21/ECMAScript规范中的this说明/"
+             data-title="ECMASCript规范关于this的说明" data-url="http://liyangready.github.io/2015/11/21/ECMAScript规范中的this说明/">
         </div>
 
       
@@ -399,7 +406,7 @@ promiseRt.then(callback2);
 
     
       <div class="post-toc sidebar-panel-active">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本使用"><span class="nav-number">1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#promiseA+规范"><span class="nav-number">2.</span> <span class="nav-text">promiseA+规范</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析"><span class="nav-number">3.</span> <span class="nav-text">分析</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#全局代码"><span class="nav-number">1.</span> <span class="nav-text">全局代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数代码"><span class="nav-number">2.</span> <span class="nav-text">函数代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#规律"><span class="nav-number">3.</span> <span class="nav-text">规律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#统计"><span class="nav-number">4.</span> <span class="nav-text">统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料："><span class="nav-number">5.</span> <span class="nav-text">参考资料：</span></a></li></ol>
       </div>
     
   </div>

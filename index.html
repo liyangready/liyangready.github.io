@@ -103,6 +103,93 @@
           
           
             
+              <a class="post-title-link" href="/2015/11/21/ECMAScript规范中的this说明/">
+                ECMASCript规范关于this的说明
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-11-21
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/11/21/ECMAScript规范中的this说明/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/21/ECMAScript规范中的this说明/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <p>javascript中的this一直是很多初学者搞不清的地方，最后总结出各种‘经验’，我们还是从原理出发，看看官方规范是怎么解释this这件事情的。</p>
+<h3 id="全局代码">全局代码</h3><p><a href="http://es5.github.io/#x10.4.1">规范</a> , this 指向 Global Environment 就是 window，这点大家都知道了，没什么好解释的。</p>
+<h3 id="函数代码">函数代码</h3><p><a href="http://es5.github.io/#x10.4.3">规范</a>如是说：</p>
+<blockquote>
+<p>The following steps are performed when control enters the execution context for <a href="http://es5.github.io/#function-code">function code</a> contained in function object <em>F</em>, a caller provided <em>thisArg</em>, and a caller provided <em>argumentsList</em>:</p>
+</blockquote>
+<p>从上面可以获取到，在执行函数代码时，this作为参数，是由调用者提供的，我们看调用的时候this是如何传递进去的。<br>
+            <div class="post-more-link text-center">
+              <a class="btn" href="/2015/11/21/ECMAScript规范中的this说明/#more">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/规范/">
+                #规范
+              </a>
+            
+          </div>
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/11/15/ECMAScript可执行程序和可执行上下文/">
                 ECMAScript代码执行过程
               </a>
@@ -515,87 +602,6 @@ util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事�
 
 
   
-    
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/08/08/async源码解析/">
-                async源码解析
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-          <span class="post-time">
-            
-              发表于 2015-08-08
-            
-          </span>
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/08/08/async源码解析/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/08/async源码解析/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </div>
-
-    
-      <div class="post-body">
-
-        
-        
-
-        
-          
-            <h2 id="前言">前言</h2><p>异步是javascript一个标志，尤其在nodejs中，操作数据库等往往带来大量的异步调用，所谓的“callback hell”由此而来，async作为成名较早的异步流程库，API设计属于异步1.0时代，其思想非常接近主流思考方向，源码必然很有参考价值，于是找时间看了一下其源码中的几个主要方法。</p>
-            <div class="post-more-link text-center">
-              <a class="btn" href="/2015/08/08/async源码解析/#more">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-        
-      </div>
-    
-
-    
-      <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/源码/">
-                #源码
-              </a>
-            
-          </div>
-        
-
-        
-
-        
-        
-          <div class="post-eof"></div>
-        
-      </div>
-    
-  </div>
-
-
-  
 
           </div>
 
@@ -628,7 +634,7 @@ util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事�
       <p class="site-description motion-element"></p>
       <div class="site-state motion-element">
         <div class="site-state-item site-state-posts">
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </div>
         <div class="site-state-item site-state-tags">
