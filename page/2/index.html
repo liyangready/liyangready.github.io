@@ -103,6 +103,106 @@
           
           
             
+              <a class="post-title-link" href="/2015/08/10/promise相关/">
+                promise相关
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+          <span class="post-time">
+            
+              发表于 2015-08-10
+            
+          </span>
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/08/10/promise相关/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/10/promise相关/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    
+      <div class="post-body">
+
+        
+        
+
+        
+          
+            <h1 id="基本使用">基本使用</h1><p><em>以ES6的 promise 为准。</em><br>在处理一个异步操作时，如果希望通过promise来实现，我们只需要两步：  </p>
+<ul>
+<li>封装一个promise对象  <pre>
+  function someSyncFn() {
+    return new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        console.log("after 2s");
+        resolve(2000);
+      }, 2000);
+    })
+  }
+  </pre></li>
+<li>调用then方法  <pre>
+  someSyncFn().then(function(value) {
+      console.log("getValue:" + value);
+  });
+  </pre>
+
+</li>
+</ul>
+            <div class="post-more-link text-center">
+              <a class="btn" href="/2015/08/10/promise相关/#more">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+        
+      </div>
+    
+
+    
+      <div class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/promise/">
+                #promise
+              </a>
+            
+          </div>
+        
+
+        
+
+        
+        
+          <div class="post-eof"></div>
+        
+      </div>
+    
+  </div>
+
+
+  
+    
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/08/08/async源码解析/">
                 async源码解析
               </a>
@@ -426,96 +526,6 @@ var h = window.innerHeight
 
 
   
-    
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/">
-                ECMAScript3 VS ECMAScript5 - 代码执行流程
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-          <span class="post-time">
-            
-              发表于 2015-04-25
-            
-          </span>
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </div>
-
-    
-      <div class="post-body">
-
-        
-        
-
-        
-          
-            <p>##ECMAScript3 代码执行流程</p>
-<p>###ES3中可以执行的代码分为下面三种：</p>
-<ul>
-<li>全局代码</li>
-<li>函数代码</li>
-<li>eval代码</li>
-</ul>
-<p>ECAMScript代码进入上述的每一种代码环境开始执行之前，会创建一个叫做 <em>执行上下文(Execution Context)</em> 的东西，它存在于这个代码环境执行的整个过程，在退出代码环境的时候，也退出了对应的上下文。</p>
-<p>简单的来说，一段javascript代码，从上到下，每次进入到上述3种之一的代码，就会创建一个上下文，可执行代码执行完了之后这个上下文也会被销毁，整个程序自然而然可以想象的到，内部维护了一个栈，这个栈的顶端就代表着当前的执行环境，每进入一个新的代码执行环境，就创建并推入上下文栈一个新的上下文，退出的时候从上下文栈中推出。</p>
-<p><em>可执行上下文</em> 我们简称 <strong>EC</strong>。</p>
-            <div class="post-more-link text-center">
-              <a class="btn" href="/2015/04/25/ECMAScript3-VS-ECMAScript5-代码执行流程/#more">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-        
-      </div>
-    
-
-    
-      <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/规范/">
-                #规范
-              </a>
-            
-          </div>
-        
-
-        
-
-        
-        
-          <div class="post-eof"></div>
-        
-      </div>
-    
-  </div>
-
-
-  
 
           </div>
 
@@ -548,7 +558,7 @@ var h = window.innerHeight
       <p class="site-description motion-element"></p>
       <div class="site-state motion-element">
         <div class="site-state-item site-state-posts">
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </div>
         <div class="site-state-item site-state-tags">
@@ -582,7 +592,7 @@ var h = window.innerHeight
         <div class="copyright">
   
   &copy; &nbsp; 
-  2015
+  2016
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>

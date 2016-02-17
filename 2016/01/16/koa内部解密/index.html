@@ -18,25 +18,13 @@
 
 
 
+	<meta name="keywords" content="源码," />
 
-    <meta name="keywords" content="Hexo,next" />
-
-
-
-
-
-    <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.3.0rc5" />
-
-
-
-
-  <title> liyangready's blog </title>
+  <title> koa内部解密 // liyangready's blog </title>
 </head>
 
 <body>
-  <div class="container one-column 
-   page-home 
-">
+  <div class="container one-column page-post-detail">
 
     <div id="header" class="header">
       <div class="header-inner">
@@ -92,7 +80,6 @@
           <div id="posts" class="posts-expand">
             
   
-    
 
   <div class="post post-type-normal ">
     <div class="post-header">
@@ -103,9 +90,7 @@
           
           
             
-              <a class="post-title-link" href="/2016/01/16/koa内部解密/">
-                koa内部解密
-              </a>
+              koa内部解密
             
           
         </h1>
@@ -137,8 +122,7 @@
         
 
         
-          
-            <h2 id="koa">koa</h2><p>koa一直有所耳闻，没怎么用过，因为express在公司内部项目较多而且较为成熟，一直找不到使用koa的理由。最近在搭公司的npm源，看了下淘宝的cnpm，发现其是基于koa实现的。所以看了下koa框架。</p>
+          <h2 id="koa">koa</h2><p>koa一直有所耳闻，没怎么用过，因为express在公司内部项目较多而且较为成熟，一直找不到使用koa的理由。最近在搭公司的npm源，看了下淘宝的cnpm，发现其是基于koa实现的。所以看了下koa框架。</p>
 <h2 id="使用">使用</h2><p>koa基本设计和express很类似，通过中间件来处理各个请求。但是其主要设计都是和generator有关，还是有不一样的地方，我主要不是关注使用，这部分可以参考官网：<a href="http://koajs.com/" target="_blank" rel="external">http://koajs.com/</a></p>
 <h2 id="中间件机制">中间件机制</h2><p>koa创建一个基本的 http server如下：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</span><br><span class="line"><span class="keyword">var</span> app = koa();</span><br><span class="line">http.createServer(app.callback()).listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
@@ -181,7 +165,6 @@
 <p>app.get(‘/‘, generatorA, generatorB);</p>
 <p>generatorA和generatorB将和中间件一样依次执行</p>
 
-          
         
       </div>
     
@@ -199,442 +182,40 @@
         
 
         
+          <div class="post-nav">
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2015/11/21/ECMAScript规范中的this说明/">ECMASCript规范关于this的说明</a>
+              
+            </div>
+          </div>
+        
 
         
-        
-          <div class="post-eof"></div>
         
       </div>
     
   </div>
 
 
+
   
-    
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
+    <div class="comments" id="comments">
+      
+        <div class="ds-thread" data-thread-key="2016/01/16/koa内部解密/"
+             data-title="koa内部解密" data-url="http://liyangready.github.io/2016/01/16/koa内部解密/">
+        </div>
 
       
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/11/21/ECMAScript规范中的this说明/">
-                ECMASCript规范关于this的说明
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-          <span class="post-time">
-            
-              发表于 2015-11-21
-            
-          </span>
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/11/21/ECMAScript规范中的this说明/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/21/ECMAScript规范中的this说明/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
     </div>
-
-    
-      <div class="post-body">
-
-        
-        
-
-        
-          
-            <p>javascript中的this一直是很多初学者搞不清的地方，最后总结出各种‘经验’，我们还是从原理出发，看看官方规范是怎么解释this这件事情的。</p>
-<h3 id="全局代码">全局代码</h3><p><a href="http://es5.github.io/#x10.4.1">规范</a> , this 指向 Global Environment 就是 window，这点大家都知道了，没什么好解释的。</p>
-<h3 id="函数代码">函数代码</h3><p><a href="http://es5.github.io/#x10.4.3">规范</a>如是说：</p>
-<blockquote>
-<p>The following steps are performed when control enters the execution context for <a href="http://es5.github.io/#function-code">function code</a> contained in function object <em>F</em>, a caller provided <em>thisArg</em>, and a caller provided <em>argumentsList</em>:</p>
-</blockquote>
-<p>从上面可以获取到，在执行函数代码时，this作为参数，是由调用者提供的，我们看调用的时候thisArg是如何传递进去的。</p>
-            <div class="post-more-link text-center">
-              <a class="btn" href="/2015/11/21/ECMAScript规范中的this说明/#more">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-        
-      </div>
-    
-
-    
-      <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/规范/">
-                #规范
-              </a>
-            
-          </div>
-        
-
-        
-
-        
-        
-          <div class="post-eof"></div>
-        
-      </div>
-    
-  </div>
-
-
-  
-    
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/11/15/ECMAScript可执行程序和可执行上下文/">
-                ECMAScript代码执行过程
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-          <span class="post-time">
-            
-              发表于 2015-11-15
-            
-          </span>
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/11/15/ECMAScript可执行程序和可执行上下文/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/15/ECMAScript可执行程序和可执行上下文/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </div>
-
-    
-      <div class="post-body">
-
-        
-        
-
-        
-          
-            <h1 id="ECMAScript可执行程序和可执行上下文">ECMAScript可执行程序和可执行上下文</h1><h3 id="ES5可执行程序">ES5可执行程序</h3><ul>
-<li>全局代码</li>
-<li>eval代码</li>
-<li>函数代码</li>
-</ul>
-<h3 id="ES5可执行上下文">ES5可执行上下文</h3><p>当ECMAScript引擎执行一段ECMAScript程序的时候，进入不同的可执行程序会创建不同的可执行上下文。比如进入全局代码，会创建全局上下文，进入函数代码，会创建函数上下文。其中函数上下文最具有代表性，进入一段函数代码会发生下面的事情：</p>
-            <div class="post-more-link text-center">
-              <a class="btn" href="/2015/11/15/ECMAScript可执行程序和可执行上下文/#more">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-        
-      </div>
-    
-
-    
-      <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/规范/">
-                #规范
-              </a>
-            
-          </div>
-        
-
-        
-
-        
-        
-          <div class="post-eof"></div>
-        
-      </div>
-    
-  </div>
-
-
-  
-    
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/09/16/nodejs源码-http-server/">
-                nodejs源码-http server
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-          <span class="post-time">
-            
-              发表于 2015-09-16
-            
-          </span>
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/09/16/nodejs源码-http-server/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/16/nodejs源码-http-server/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </div>
-
-    
-      <div class="post-body">
-
-        
-        
-
-        
-          
-            <pre>
-var http = require('http');
-http.createServer(function(req, res) {
-  res.write('ok');
-  res.end();
-}).listen(3000);
-</pre>
-
-<p>本文主要想探索一下上面这段代码在nodejs内部到底发生了什么？</p>
-<h2 id="http-createServer">http.createServer</h2><p>nodejs源码在github上面，其中js部分源码存在了 node/lib 目录下。我们先看 http 模块的代码。<br><code>node/lib/http.js</code>:   </p>
-<pre>
-const server = require('_http_server');
-...
-const Server = exports.Server = server.Server;
-...
-exports.createServer = function(requestListener) {
-  return new Server(requestListener);
-};
-</pre> 
-
-<p>可以清楚的看出，createServer返回了一个Server的实例，然后将用户的回调传递进去，Server来自<code>node/lib/_http_server_</code>：</p>
-<pre>
-function Server(requestListener) {
-  if (!(this instanceof Server)) return new Server(requestListener);
-  net.Server.call(this, { allowHalfOpen: true });
-  if (requestListener) {
-    this.addListener('request', requestListener);
-  }
-  this.httpAllowHalfOpen = false;
-  this.addListener('connection', connectionListener);
-  this.addListener('clientError', function(err, conn) {...});
-  this.timeout = 2 * 60 * 1000;
-}
-util.inherits(Server, net.Server);
-</pre>
-从上面代码可以看出，Server会继承net.Server，同时自己增加了 httpAllowHalfOpen(用到再说) 和默认的超时时间(2min)，绑定了三个事件(onrequest-即用户在createServer传递的事件、onconnection和onclientError);
-先不管事件，继续看 net.Server,位于`node/lib/net.js`:
-
-<pre>
-function Server(options, connectionListener) {
-  // options: { allowHalfOpen: true }, connectionListener: undefined
-  ...
-  events.EventEmitter.call(this); //继承事件，让server拥有事件能力
-  ...
- this._connections = 0;
- //这一段定义connections了connections，标记其get set时候都不能被外部使用，否则打印一个warning
- Object.defineProperty(this, 'connections', {
-    get: internalUtil.deprecate(function() {
-      if (self._usingSlaves) {
-        return null;
-      }
-      return self._connections;
-    }, 'Server.connections property is deprecated. ' +
-       'Use Server.getConnections method instead.'),
-    set: internalUtil.deprecate(function(val) {
-      return (self._connections = val);
-    }, 'Server.connections property is deprecated.'),
-    configurable: true, enumerable: false
-  });
-
-  this._handle = null;
-  this._usingSlaves = false;
-  this._slaves = [];
-  this._unref = false;
-
-  this.allowHalfOpen = options.allowHalfOpen || false;
-  this.pauseOnConnect = !!options.pauseOnConnect;
-  //---------调用结束---------
-}
-util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事件能力
-</pre>
-由上，实际上net.Server不过是定义了一堆变量挂在自己身上，因此 http Server也挂了这些属性到this上面。到此，createServer其实已经结束了。
-            <div class="post-more-link text-center">
-              <a class="btn" href="/2015/09/16/nodejs源码-http-server/#more">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-        
-      </div>
-    
-
-    
-      <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/源码/">
-                #源码
-              </a>
-            
-          </div>
-        
-
-        
-
-        
-        
-          <div class="post-eof"></div>
-        
-      </div>
-    
-  </div>
-
-
-  
-    
-
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/08/14/nodejs真的是单线程吗？/">
-                nodejs真的是单线程吗？
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-          <span class="post-time">
-            
-              发表于 2015-08-14
-            
-          </span>
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/08/14/nodejs真的是单线程吗？/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/14/nodejs真的是单线程吗？/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
-    </div>
-
-    
-      <div class="post-body">
-
-        
-        
-
-        
-          
-            <h1 id="问题由来">问题由来</h1><p>事件驱动、异步、单线程、非阻塞I/O，这是我们听得最多的关于nodejs的介绍，连nodejs官网都是这么写的：</p>
-<blockquote>
-<p>Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.</p>
-</blockquote>
-<p>过去很长时间里，我都愿意接受这些“耳熟能详”的观点，直到最近，遇到过很多性能问题之后，我才开始思考，nodejs的内部机制到底是怎样的，nodejs的性能瓶颈在哪里？</p>
-<p>#问题</p>
-<ul>
-<li>nodejs既然是单线程，如何实现异步I/O？ </li>
-<li>nodejs如何实现非阻塞I/O的？</li>
-<li>nodejs事件驱动是如何实现的？</li>
-<li>nodejs全是异步调用和非阻塞I/O，就真的不用管并发数了吗？</li>
-<li>nodejs如何靠js和操作系统打交道的？</li>
-</ul>
-            <div class="post-more-link text-center">
-              <a class="btn" href="/2015/08/14/nodejs真的是单线程吗？/#more">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-        
-      </div>
-    
-
-    
-      <div class="post-footer">
-        
-          <div class="post-tags">
-            
-              <a href="/tags/nodejs/">
-                #nodejs
-              </a>
-            
-          </div>
-        
-
-        
-
-        
-        
-          <div class="post-eof"></div>
-        
-      </div>
-    
-  </div>
-
-
   
 
           </div>
 
-          
-            <div class="pagination">
-              <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">&raquo;</a>
-            </div>
           
         </div>
 
@@ -650,6 +231,15 @@ util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事�
 <div id="sidebar" class="sidebar">
   <div class="sidebar-inner">
 
+    
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview" data-target="site-overview">
+          站点概览
+        </li>
+      </ul>
     
 
     <div class="site-overview">
@@ -681,6 +271,10 @@ util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事�
 
     </div>
 
+    
+      <div class="post-toc sidebar-panel-active">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#koa"><span class="nav-number">1.</span> <span class="nav-text">koa</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">2.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#中间件机制"><span class="nav-number">3.</span> <span class="nav-text">中间件机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路由机制"><span class="nav-number">4.</span> <span class="nav-text">路由机制</span></a></li></ol>
+      </div>
     
   </div>
 </div>
@@ -761,17 +355,6 @@ util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事�
   <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
 
   
-  <script type="text/javascript" id="motion.page.home">
-    $(document).ready(function () {
-      $.Velocity.RunSequence([
-        { e: $('.brand'), p: { opacity: 1 }, o: { duration: 100 } },
-        { e: $('.logo'), p: { opacity: 1, top: 0 }, o: { duration: 50} },
-        { e: $('.site-title'), p: { opacity: 1, top: 0 }, o: { duration: 200, sequenceQueue: false } }
-      ]);
-      $('.menu-item').velocity('transition.slideDownIn', {display: null});
-    });
-  </script>
-
 
   <script type="text/javascript" id="motion.global">
   $(document).ready(function () {
@@ -889,6 +472,310 @@ util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事�
 
 
   
+  
+<script type="text/javascript" id="bootstrap.scrollspy.custom">
+  /* ========================================================================
+  * Bootstrap: scrollspy.js v3.3.2
+  * http://getbootstrap.com/javascript/#scrollspy
+  * ========================================================================
+  * Copyright 2011-2015 Twitter, Inc.
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+  * ======================================================================== */
+
+  /**
+   * Custom by iissnan
+   *
+   * - Add a `clear.bs.scrollspy` event.
+   * - Esacpe targets selector.
+   */
+
+
+  +function ($) {
+    'use strict';
+
+    // SCROLLSPY CLASS DEFINITION
+    // ==========================
+
+    function ScrollSpy(element, options) {
+      this.$body          = $(document.body)
+      this.$scrollElement = $(element).is(document.body) ? $(window) : $(element)
+      this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
+      this.selector       = (this.options.target || '') + ' .nav li > a'
+      this.offsets        = []
+      this.targets        = []
+      this.activeTarget   = null
+      this.scrollHeight   = 0
+
+      this.$scrollElement.on('scroll.bs.scrollspy', $.proxy(this.process, this))
+      this.refresh()
+      this.process()
+    }
+
+    ScrollSpy.VERSION  = '3.3.2'
+
+    ScrollSpy.DEFAULTS = {
+      offset: 10
+    }
+
+    ScrollSpy.prototype.getScrollHeight = function () {
+      return this.$scrollElement[0].scrollHeight || Math.max(this.$body[0].scrollHeight, document.documentElement.scrollHeight)
+    }
+
+    ScrollSpy.prototype.refresh = function () {
+      var that          = this
+      var offsetMethod  = 'offset'
+      var offsetBase    = 0
+
+      this.offsets      = []
+      this.targets      = []
+      this.scrollHeight = this.getScrollHeight()
+
+      if (!$.isWindow(this.$scrollElement[0])) {
+        offsetMethod = 'position'
+        offsetBase   = this.$scrollElement.scrollTop()
+      }
+
+      this.$body
+        .find(this.selector)
+        .map(function () {
+          var $el   = $(this)
+          var href  = $el.data('target') || $el.attr('href')
+          var $href = /^#./.test(href) && $(escapeSelector(href)) // Need to escape selector.
+
+          return ($href
+            && $href.length
+            && $href.is(':visible')
+            && [[$href[offsetMethod]().top + offsetBase, href]]) || null
+        })
+        .sort(function (a, b) { return a[0] - b[0] })
+        .each(function () {
+          that.offsets.push(this[0])
+          that.targets.push(this[1])
+        })
+
+
+    }
+
+    ScrollSpy.prototype.process = function () {
+      var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
+      var scrollHeight = this.getScrollHeight()
+      var maxScroll    = this.options.offset + scrollHeight - this.$scrollElement.height()
+      var offsets      = this.offsets
+      var targets      = this.targets
+      var activeTarget = this.activeTarget
+      var i
+
+      if (this.scrollHeight != scrollHeight) {
+        this.refresh()
+      }
+
+      if (scrollTop >= maxScroll) {
+        return activeTarget != (i = targets[targets.length - 1]) && this.activate(i)
+      }
+
+      if (activeTarget && scrollTop < offsets[0]) {
+        $(this.selector).trigger('clear.bs.scrollspy')  // Add a custom event.
+        this.activeTarget = null
+        return this.clear()
+      }
+
+      for (i = offsets.length; i--;) {
+        activeTarget != targets[i]
+          && scrollTop >= offsets[i]
+          && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
+          && this.activate(targets[i])
+      }
+    }
+
+    ScrollSpy.prototype.activate = function (target) {
+      this.activeTarget = target
+
+      this.clear()
+
+      var selector = this.selector +
+        '[data-target="' + target + '"],' +
+        this.selector + '[href="' + target + '"]'
+
+      var active = $(selector)
+        .parents('li')
+        .addClass('active')
+
+      if (active.parent('.dropdown-menu').length) {
+        active = active
+          .closest('li.dropdown')
+          .addClass('active')
+      }
+
+      active.trigger('activate.bs.scrollspy')
+    }
+
+    ScrollSpy.prototype.clear = function () {
+      $(this.selector)
+        .parentsUntil(this.options.target, '.active')
+        .removeClass('active')
+    }
+
+
+    // SCROLLSPY PLUGIN DEFINITION
+    // ===========================
+
+    function Plugin(option) {
+      return this.each(function () {
+        var $this   = $(this)
+        var data    = $this.data('bs.scrollspy')
+        var options = typeof option == 'object' && option
+
+        if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
+        if (typeof option == 'string') data[option]()
+      })
+    }
+
+    var old = $.fn.scrollspy
+
+    $.fn.scrollspy             = Plugin
+    $.fn.scrollspy.Constructor = ScrollSpy
+
+
+    // SCROLLSPY NO CONFLICT
+    // =====================
+
+    $.fn.scrollspy.noConflict = function () {
+      $.fn.scrollspy = old
+      return this
+    }
+
+
+    // SCROLLSPY DATA-API
+    // ==================
+
+    $(window).on('load.bs.scrollspy.data-api', function () {
+      $('[data-spy="scroll"]').each(function () {
+        var $spy = $(this)
+        Plugin.call($spy, $spy.data())
+      })
+    })
+
+  }(jQuery);
+</script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      $tocSelector.scrollPager({
+        max: getTOCMaxHeight()
+      });
+    }
+
+    function getTOCMaxHeight () {
+      // TODO: Make it beautiful
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+        parseInt($sidebarInner.css('padding-top'), 10) -
+        parseInt($sidebarInner.css('padding-bottom'), 10) -
+        $('.sidebar-nav').height() -
+        parseInt($tocSelector.css('margin-top'), 10) -
+        parseInt($tocSelector.css('margin-bottom'), 10);
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+      });
+    }
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      if ($('.post-toc').html().trim().length > 0 && isDesktop()) {
+        setTimeout(function () {
+          $('.sidebar-toggle').trigger('click');
+        }, 800);
+      }
+    });
+  </script>
+
+
+
 
   
 
