@@ -124,6 +124,7 @@
         
           <h2 id="koa">koa</h2><p>koa一直有所耳闻，没怎么用过，因为express在公司内部项目较多而且较为成熟，一直找不到使用koa的理由。最近在搭公司的npm源，看了下淘宝的cnpm，发现其是基于koa实现的。所以看了下koa框架。</p>
 <h2 id="使用">使用</h2><p>koa基本设计和express很类似，通过中间件来处理各个请求。但是其主要设计都是和generator有关，还是有不一样的地方，我主要不是关注使用，这部分可以参考官网：<a href="http://koajs.com/" target="_blank" rel="external">http://koajs.com/</a></p>
+<a id="more"></a>
 <h2 id="中间件机制">中间件机制</h2><p>koa创建一个基本的 http server如下：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</span><br><span class="line"><span class="keyword">var</span> app = koa();</span><br><span class="line">http.createServer(app.callback()).listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
 <ul>
