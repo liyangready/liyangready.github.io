@@ -1,0 +1,925 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="热门,规范," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="根治JavaScript中的this-ECMAScript规范解读">
+<meta property="og:url" content="http://liyangready.github.io/2016/07/31/根治JavaScript中的this-ECMAScript规范解读/index.html">
+<meta property="og:site_name" content="leon的后花园">
+<meta property="og:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
+<meta property="og:image" content="http://liyangready.github.io/./根治JavaScript中的this-ECMAScript规范解读/1.jpg">
+<meta property="og:updated_time" content="2016-07-31T09:13:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="根治JavaScript中的this-ECMAScript规范解读">
+<meta name="twitter:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://liyangready.github.io/2016/07/31/根治JavaScript中的this-ECMAScript规范解读/"/>
+
+  <title> 根治JavaScript中的this-ECMAScript规范解读 | leon的后花园 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0d5df6881b58c01a0b0b284670745c3c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">leon的后花园</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-hot">
+          <a href="/tags/热门/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-thumbs-o-up"></i> <br />
+            
+            热门
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-front">
+          <a href="/categories/前端/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-html5"></i> <br />
+            
+            前端
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-secure">
+          <a href="/categories/安全/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user-secret"></i> <br />
+            
+            安全
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-think">
+          <a href="/categories/思考/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-smile-o"></i> <br />
+            
+            思考
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                根治JavaScript中的this-ECMAScript规范解读
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T12:03:34+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/07/31/根治JavaScript中的this-ECMAScript规范解读/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/31/根治JavaScript中的this-ECMAScript规范解读/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言">前言</h2><p>this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：<em>Javascript的this用法</em> 、<em>深入理解JavaScript中的this关键字</em> 、<em>你不知道的this</em> 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同<strong>江湖郎中</strong>一般，都没有从根本上解释现象出现的原因，这就导致每次有了关于this的题层出不穷，因为经验总结只是教会了你现有的场景，而没有教会你如何解释新的场景。<br>老司机都知道，发展到今天，有规范在，有源码在，早已经不是IE6时代，还需要总结使用经验场景也太不科学了。最近又在网上刷到关于this的讨论，正巧在规范中追寻过this的秘密，在这里分享一下个人经验。<br><small>*以下规范均引用ES5</small></p>
+<a id="more"></a>
+<h2 id="理论篇">理论篇</h2><p>规范中之处ECMAScript有三种可执行代码：</p>
+<ul>
+<li>全局代码（<em>Global code</em>） </li>
+<li>eval代码（<em>Eval code</em>）</li>
+<li>函数代码（<em>Function code</em>）</li>
+</ul>
+<p>其中，对于全局代码直接指向<a href="http://es5.github.io/#x10.4.1.1" target="_blank" rel="external">global object</a>，eval代码由于已经不推荐使用暂不做讨论，我们主要关注函数代码中的 this 如何指定。</p>
+<h3 id="进入函数代码"><a href="http://es5.github.io/#x10.4.3" target="_blank" rel="external">进入函数代码</a></h3><blockquote>
+<p>The following steps are performed when control enters the execution context for function code contained in function object F, a caller provided thisArg, and a caller provided argumentsList</p>
+</blockquote>
+<p>规范指出，当执行流进入函数代码时，由<strong>函数调用者</strong>提供 <em>thisArg</em> 和 <em>argumentsList</em>。所以我们需要继续寻找，查看函数调用时候this是如何传递进去的。</p>
+<h3 id="函数调用"><a href="http://es5.github.io/#x11.2.3" target="_blank" rel="external">函数调用</a></h3><blockquote>
+<p>The production CallExpression : MemberExpression Arguments is evaluated as follows:      </p>
+<ol>
+<li>Let ref be the result of evaluating MemberExpression.<br>…      </li>
+<li>If Type(ref) is Reference, then<br>&emsp;a. If IsPropertyReference(ref) is true, then<br>&emsp;&emsp;i. Let thisValue be GetBase(ref).<br>&emsp;b. Else, the base of ref is an Environment Record<br>&emsp;&emsp;i. Let thisValue be the result of calling the ImplicitThisValue concrete method of GetBase(ref).</li>
+<li>Else, Type(ref) is not Reference.<br>&emsp;a. Let thisValue be undefined.</li>
+</ol>
+</blockquote>
+<p>从上述规范中，在函数调用发生时，首先会对函数名部分进行计算并赋值给 ref ，6、7中<strong>几个if else就决定了一个函数调用发生时，this会指向何方。</strong></p>
+<p><img src="./根治JavaScript中的this-ECMAScript规范解读/1.jpg" alt=""></p>
+<p>在套用if else之前，我们还需要稍微了解一下 <code>Type(ref) is Reference</code> 中的 Reference是个什么东东。</p>
+<h3 id="Reference_type"><a href="http://es5.github.io/#x8.7" target="_blank" rel="external">Reference type</a></h3><p>Reference type按字面翻译就是引用类型，但是它并不是我们常说的JavaScript中的引用类型，它是一个<strong>规范类型</strong>（实际并不存在），也就是说是为了解释规范某些行为而存在的，比如delete、typeof、赋值语句等。规范类型设计用于解析命名绑定的，它由三部分组成：</p>
+<ul>
+<li>base value，指向引用的原值</li>
+<li>referenced name，引用的名称</li>
+<li>strict reference flag，标示是否严格模式</li>
+</ul>
+<p>用大白话讲，就是规范中定义了一种类型叫做Reference用来引用其他变量，它有一个规定的数据结构。由于是规范类型，所以什么情况下会返回Reference规范上也会写得一清二楚。<br>至此，我们就可以直接开始实战了 ^ ^</p>
+<h2 id="实战篇">实战篇</h2><p>我们通过上述理论来解释下面代码中的this：</p>
+<ul>
+<li>foo();</li>
+<li>foo.bar();</li>
+<li>(f = foo.bar)();</li>
+</ul>
+<h3 id="如何解释foo();">如何解释foo();</h3><ul>
+<li><strong>1 执行函数调用规范中的第一步：</strong>  </li>
+</ul>
+<blockquote>
+<p>Let ref be the result of evaluating MemberExpression.</p>
+</blockquote>
+<p><code>MemberExpression</code>就是括号左边的部分，此处很简单就是 foo。foo我们知道就是一个标示符，那么执行foo的时候会发生什么呢？<strong>答案都在规范中</strong>：<br><a href="http://es5.github.io/#x11.1.2" target="_blank" rel="external">11.1.2 Identifier Reference</a></p>
+<blockquote>
+<p>An <strong>Identifier is evaluated by performing Identifier Resolution</strong> as specified in 10.3.1. The result of evaluating anIdentifier is always a value of type Reference.</p>
+</blockquote>
+<p>标示符被执行的时候会进行标示符解析(Identifier Resolution)，看10.3.1。（连章节都标好了好伐，只需要点过去就行了。）</p>
+<p><a href="http://es5.github.io/#x10.3.1" target="_blank" rel="external">10.3.1 Identifier Resolution</a></p>
+<blockquote>
+<p>1.Let env be the running execution context’s LexicalEnvironment.<br>…<br>3.Return the result of calling <strong>GetIdentifierReference</strong> function passing env, Identifier, and strict as arguments.  </p>
+</blockquote>
+<p>看这个返回，返回了 GetIdentifierReference 方法的结果，所以我们还需要再走一步(要有耐心 - -)</p>
+<p><a href="http://es5.github.io/#x10.2.2.1" target="_blank" rel="external"> GetIdentifierReference </a></p>
+<blockquote>
+<p>Return a value of type <strong>Reference</strong> whose base value is envRec, whose referenced name is name, and whose strict mode flag is strict.</p>
+</blockquote>
+<p>我们看此处返回了一个<strong>Reference</strong> ， base value 是 envRec 也就是 10.3.1中传入的 <strong>execution context’s LexicalEnvironment</strong><br><small>（词法环境为环境记录项Environment Record的组成，它是规范用来管理当前作用域下面变量的类型，此处不用理解，知道它返回了这个东东就行了）</small><br>其抽象数据结构大概为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">foo_reference = &#123;</span><br><span class="line">	<span class="string">"base"</span>: LexicalEnvironment,</span><br><span class="line">	<span class="string">"name"</span>: <span class="string">"foo"</span>,</span><br><span class="line">	<span class="string">"strict"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此，第一步执行完毕，<code>ref = foo_reference</code>。</p>
+<ul>
+<li><p><strong>2 因为是reference, 执行6:</strong></p>
+<blockquote>
+<p>Type(ref) is Reference</p>
+</blockquote>
+</li>
+<li><p><strong>3 因为是Environment Record,执行 6.b:</strong></p>
+</li>
+</ul>
+<blockquote>
+<p>Else, the base of ref is an Environment Record<br>Let thisValue be the result of calling the ImplicitThisValue concrete method of GetBase(ref).</p>
+</blockquote>
+<ul>
+<li><strong>4 ImplicitThisValue</strong><br>最后，thisValue等于执行ImplicitThisValue的结果，还是查看规范：</li>
+</ul>
+<p><a href="http://es5.github.io/#x10.2.1.1.6" target="_blank" rel="external">10.2.1.1.6 ImplicitThisValue()</a> </p>
+<blockquote>
+<p>Declarative Environment Records always return undefined as their ImplicitThisValue.</p>
+</blockquote>
+<p>到此我们知道，foo()执行时, <code>thisValue = undefined;</code> , 对应到 JavaScript 代码中的 this，还差最后一步：</p>
+<blockquote>
+<p>Else if thisArg is null or undefined, set the ThisBinding to the global object.</p>
+</blockquote>
+<p>真相大白：foo()执行时，<strong>this = global = window</strong></p>
+<h3 id="如何解释_foo-bar()">如何解释 foo.bar()</h3><ul>
+<li><strong>1 执行函数调用规范中的第一步：</strong>  </li>
+</ul>
+<blockquote>
+<p>Let ref be the result of evaluating MemberExpression.</p>
+</blockquote>
+<p>foo.bar我们都知道是一个属性访问，那么执行属性访问的时候会发生什么呢？<strong>答案都在规范中</strong>：<br><a href="http://es5.github.io/#x11.2.1" target="_blank" rel="external">11.2.1 Property Accessors</a></p>
+<blockquote>
+<p>The production MemberExpression : MemberExpression [ Expression ] is evaluated as follows:<br>1.Let baseReference be the result of evaluating MemberExpression.<br>2.Let baseValue be GetValue(baseReference)<br>8.Return a value of type Reference whose base value is baseValue and whose referenced name ispropertyNameString, and whose strict mode flag is strict</p>
+</blockquote>
+<ol>
+<li>baseReference 等于执行 MemberExpression 在此处为 []左边的语句即 foo 的结果，上一节已经说过了返回一个 reference.</li>
+<li>baseValue 等于 GetValue(baseReference) 。<br> <a href="http://es5.github.io/#x8.7.1" target="_blank" rel="external">8.7.1 GetValue</a><br> （ GetValue属于一个规范中比较重要的方法，此处为节约篇幅，暂时不讲，以后可以单开文章讲解。暂时记住他的结果一般为：如果是reference传入，会返回一个普通类型出来。比如 foo 为reference，通过GetValue之后就是一个普通的 object，也就是 foo 对应的 js 类型本身。）<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">reference_foo_bar = &#123;</span><br><span class="line">	<span class="string">"base"</span>: foo,</span><br><span class="line">	<span class="string">"name"</span>: <span class="string">"bar"</span>,</span><br><span class="line">	<span class="string">"strict"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li><p><strong>2 因为是reference, 执行6:</strong></p>
+<blockquote>
+<p>Type(ref) is Reference</p>
+</blockquote>
+</li>
+<li><p><strong>3 因为是属性引用类型,执行 6.a:</strong></p>
+<blockquote>
+<p>If IsPropertyReference(ref) is true, then<br>i.Let thisValue be GetBase(ref).</p>
+</blockquote>
+</li>
+</ul>
+<p><code>GetBase(ref) = reference_foo_bar.base = foo</code>;</p>
+<p>真相大白， <strong>foo.bar() 执行时 this 指向 foo</strong></p>
+<h3 id="如何解释_(f_=_foo-bar)()">如何解释 (f = foo.bar)()</h3><p>这个语句属于罕见写法，在各种经验总结中属于高级技巧，但是通过规范，一样分分钟搞定。</p>
+<ul>
+<li><strong>1 执行函数调用规范中的第一步：</strong>  </li>
+</ul>
+<blockquote>
+<p>Let ref be the result of evaluating MemberExpression.<br>f = foo.bar 是一个明显的赋值语句，我们查看规范，赋值语句会发生什么：<br>[11.13.1 Simple Assignment ( = )] (<a href="http://es5.github.io/#x11.13.1" target="_blank" rel="external">http://es5.github.io/#x11.13.1</a>)<br>The production AssignmentExpression : LeftHandSideExpression = AssignmentExpression is evaluated as follows:</p>
+<ol>
+<li>Let rref be the result of evaluating AssignmentExpression.</li>
+<li>Let rval be GetValue(rref)</li>
+<li>Return rval.</li>
+</ol>
+</blockquote>
+<p>可以看出简单赋值语句返回的是对等于号右边进行GetValue之后的结果，上一节讲了，执行过GetValue就会返回js的类型，此处会返回 foo.bar 也就是一个 [Object Function] 类型。</p>
+<ul>
+<li><p><strong>2 ref不是reference，执行7</strong></p>
+<blockquote>
+<p>7.Else, Type(ref) is not Reference.<br>a.    Let thisValue be undefined.</p>
+</blockquote>
+</li>
+<li><p><strong>3 thisValue = undefined</strong><br>同理：</p>
+<blockquote>
+<p>Else if thisArg is null or undefined, set the ThisBinding to the global object.</p>
+</blockquote>
+</li>
+</ul>
+<p>真相大白， <strong>(f = foo.bar)() 执行时 this = global = window</strong></p>
+<h2 id="老司机的经验">老司机的经验</h2><p>虽然我们不是江湖郎中，但是每次查询规范也有点麻烦，此处还是有一定规律可循的。<br>我们观察上述过程，其实最关键的就是判断返回值是不是 reference ，如果不是，直接可以推出等于window，如果是，只需要看是不是属性 reference。这里有外国友人统计过一张速查表：</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Reference?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“foo”</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>123</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>/x/</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>({})</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>(function(){})</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>foo</td>
+<td>Yes</td>
+<td>Could be unresolved reference if <code>foo</code> is not defined</td>
+</tr>
+<tr>
+<td>foo.bar</td>
+<td>Yes</td>
+<td>Property reference</td>
+</tr>
+<tr>
+<td>(123).toString</td>
+<td>Yes</td>
+<td>Property reference</td>
+</tr>
+<tr>
+<td>(function(){}).toString</td>
+<td>Yes</td>
+<td>Property reference</td>
+</tr>
+<tr>
+<td>(1,foo.bar)</td>
+<td>No</td>
+<td>Already evaluated, BUT see grouping operator exception</td>
+</tr>
+<tr>
+<td>(f = foo.bar)</td>
+<td>No</td>
+<td>Already evaluated, BUT see grouping operator exception</td>
+</tr>
+<tr>
+<td>(foo)</td>
+<td>Yes</td>
+<td>Grouping operator does not evaluate reference</td>
+</tr>
+<tr>
+<td>(foo.bar)</td>
+<td>Yes</td>
+<td>Ditto with property reference            </td>
+</tr>
+</tbody>
+</table>
+<h2 id="结语">结语</h2><p>只想说一句：<strong>答案都在规范中</strong>，<strong>答案都在规范中</strong>，<strong>答案都在规范中</strong> 。与其读微博上某些不靠谱大V的总结，不如去撸一遍规范。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>喝杯咖啡，交个朋友</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/common/wx-pay.jpg" alt="leon.lee WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/热门/" rel="tag">#热门</a>
+          
+            <a href="/tags/规范/" rel="tag">#规范</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/14/可信前端之路-代码保护/" rel="next" title="可信前端之路-代码保护">
+                <i class="fa fa-chevron-left"></i> 可信前端之路-代码保护
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/07/31/根治JavaScript中的this-ECMAScript规范解读/"
+           data-title="根治JavaScript中的this-ECMAScript规范解读" data-url="http://liyangready.github.io/2016/07/31/根治JavaScript中的this-ECMAScript规范解读/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/5040076?v=3&s=460"
+               alt="leon.lee" />
+          <p class="site-author-name" itemprop="name">leon.lee</p>
+          <p class="site-description motion-element" itemprop="description">不谈兴趣，不谈情怀，计算机就是我的职业，像一个专业的人去思考，去coding</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">25</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/liyangready" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/leon-lee-15" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-book"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理论篇"><span class="nav-number">2.</span> <span class="nav-text">理论篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进入函数代码"><span class="nav-number">2.1.</span> <span class="nav-text">进入函数代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数调用"><span class="nav-number">2.2.</span> <span class="nav-text">函数调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reference_type"><span class="nav-number">2.3.</span> <span class="nav-text">Reference type</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实战篇"><span class="nav-number">3.</span> <span class="nav-text">实战篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何解释foo();"><span class="nav-number">3.1.</span> <span class="nav-text">如何解释foo();</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何解释_foo-bar()"><span class="nav-number">3.2.</span> <span class="nav-text">如何解释 foo.bar()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何解释_(f_=_foo-bar)()"><span class="nav-number">3.3.</span> <span class="nav-text">如何解释 (f = foo.bar)()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#老司机的经验"><span class="nav-number">4.</span> <span class="nav-text">老司机的经验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leon.lee</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"liyangready"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
