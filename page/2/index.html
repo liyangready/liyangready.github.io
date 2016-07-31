@@ -288,199 +288,6 @@
             
               
                 
-                <a class="post-title-link" href="/2015/09/16/nodejs源码-http-server/" itemprop="url">
-                  nodejs源码-http server
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-09-16T14:20:46+08:00" content="2015-09-16">
-              2015-09-16
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/前端/" itemprop="url" rel="index">
-                    <span itemprop="name">前端</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/09/16/nodejs源码-http-server/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/16/nodejs源码-http-server/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <pre>
-var http = require('http');
-http.createServer(function(req, res) {
-  res.write('ok');
-  res.end();
-}).listen(3000);
-</pre>
-
-<p>本文主要想探索一下上面这段代码在nodejs内部到底发生了什么？</p>
-<h2 id="http-createServer">http.createServer</h2><p>nodejs源码在github上面，其中js部分源码存在了 node/lib 目录下。我们先看 http 模块的代码。<br><code>node/lib/http.js</code>:   </p>
-<pre>
-const server = require('_http_server');
-...
-const Server = exports.Server = server.Server;
-...
-exports.createServer = function(requestListener) {
-  return new Server(requestListener);
-};
-</pre> 
-
-<p>可以清楚的看出，createServer返回了一个Server的实例，然后将用户的回调传递进去，Server来自<code>node/lib/_http_server_</code>：</p>
-<pre>
-function Server(requestListener) {
-  if (!(this instanceof Server)) return new Server(requestListener);
-  net.Server.call(this, { allowHalfOpen: true });
-  if (requestListener) {
-    this.addListener('request', requestListener);
-  }
-  this.httpAllowHalfOpen = false;
-  this.addListener('connection', connectionListener);
-  this.addListener('clientError', function(err, conn) {...});
-  this.timeout = 2 * 60 * 1000;
-}
-util.inherits(Server, net.Server);
-</pre>
-从上面代码可以看出，Server会继承net.Server，同时自己增加了 httpAllowHalfOpen(用到再说) 和默认的超时时间(2min)，绑定了三个事件(onrequest-即用户在createServer传递的事件、onconnection和onclientError);
-先不管事件，继续看 net.Server,位于`node/lib/net.js`:
-
-<pre>
-function Server(options, connectionListener) {
-  // options: { allowHalfOpen: true }, connectionListener: undefined
-  ...
-  events.EventEmitter.call(this); //继承事件，让server拥有事件能力
-  ...
- this._connections = 0;
- //这一段定义connections了connections，标记其get set时候都不能被外部使用，否则打印一个warning
- Object.defineProperty(this, 'connections', {
-    get: internalUtil.deprecate(function() {
-      if (self._usingSlaves) {
-        return null;
-      }
-      return self._connections;
-    }, 'Server.connections property is deprecated. ' +
-       'Use Server.getConnections method instead.'),
-    set: internalUtil.deprecate(function(val) {
-      return (self._connections = val);
-    }, 'Server.connections property is deprecated.'),
-    configurable: true, enumerable: false
-  });
-
-  this._handle = null;
-  this._usingSlaves = false;
-  this._slaves = [];
-  this._unref = false;
-
-  this.allowHalfOpen = options.allowHalfOpen || false;
-  this.pauseOnConnect = !!options.pauseOnConnect;
-  //---------调用结束---------
-}
-util.inherits(Server, events.EventEmitter);//继承事件，让server拥有事件能力
-</pre>
-由上，实际上net.Server不过是定义了一堆变量挂在自己身上，因此 http Server也挂了这些属性到this上面。到此，createServer其实已经结束了。
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/09/16/nodejs源码-http-server/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2015/08/14/nodejs真的是单线程吗？/" itemprop="url">
                   nodejs真的是单线程吗？
                 </a>
@@ -1004,6 +811,128 @@ var h = window.innerHeight
 
 
     
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/07/26/构建一个支持https的透明代理/" itemprop="url">
+                  构建一个支持https的透明代理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-07-26T16:26:27+08:00" content="2015-07-26">
+              2015-07-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/07/26/构建一个支持https的透明代理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/07/26/构建一个支持https的透明代理/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="需求">需求</h2><p>在做 <a href="https://github.com/liyangready/multiple-host">多host工具</a> 项目时，我需要一个透明代理，让浏览器的所有的请求通过一个nodejs server转发，从而可以实现修改请求的目的。问题就是，如何构建一个能够同时支持http &amp;&amp; https的web proxy。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/07/26/构建一个支持https的透明代理/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -1049,7 +978,7 @@ var h = window.innerHeight
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">25</span>
+              <span class="site-state-item-count">24</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

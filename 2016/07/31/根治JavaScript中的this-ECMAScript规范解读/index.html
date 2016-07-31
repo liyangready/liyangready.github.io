@@ -90,8 +90,8 @@
 <meta property="og:url" content="http://liyangready.github.io/2016/07/31/根治JavaScript中的this-ECMAScript规范解读/index.html">
 <meta property="og:site_name" content="leon的后花园">
 <meta property="og:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
-<meta property="og:image" content="http://liyangready.github.io/./根治JavaScript中的this-ECMAScript规范解读/1.jpg">
-<meta property="og:updated_time" content="2016-07-31T09:13:52.000Z">
+<meta property="og:image" content="http://liyangready.github.io/./1.jpg">
+<meta property="og:updated_time" content="2016-07-31T09:15:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="根治JavaScript中的this-ECMAScript规范解读">
 <meta name="twitter:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
@@ -375,7 +375,7 @@
 </ol>
 </blockquote>
 <p>从上述规范中，在函数调用发生时，首先会对函数名部分进行计算并赋值给 ref ，6、7中<strong>几个if else就决定了一个函数调用发生时，this会指向何方。</strong></p>
-<p><img src="./根治JavaScript中的this-ECMAScript规范解读/1.jpg" alt=""></p>
+<p><img src="./1.jpg" alt=""></p>
 <p>在套用if else之前，我们还需要稍微了解一下 <code>Type(ref) is Reference</code> 中的 Reference是个什么东东。</p>
 <h3 id="Reference_type"><a href="http://es5.github.io/#x8.7" target="_blank" rel="external">Reference type</a></h3><p>Reference type按字面翻译就是引用类型，但是它并不是我们常说的JavaScript中的引用类型，它是一个<strong>规范类型</strong>（实际并不存在），也就是说是为了解释规范某些行为而存在的，比如delete、typeof、赋值语句等。规范类型设计用于解析命名绑定的，它由三部分组成：</p>
 <ul>
@@ -697,7 +697,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">25</span>
+              <span class="site-state-item-count">24</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
