@@ -91,7 +91,7 @@
 <meta property="og:site_name" content="leon的后花园">
 <meta property="og:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
 <meta property="og:image" content="http://liyangready.github.io/./1.jpg">
-<meta property="og:updated_time" content="2016-07-31T09:15:04.000Z">
+<meta property="og:updated_time" content="2016-07-31T09:19:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="根治JavaScript中的this-ECMAScript规范解读">
 <meta name="twitter:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
@@ -414,13 +414,13 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">foo_reference = &#123;</span><br><span class="line">	<span class="string">"base"</span>: LexicalEnvironment,</span><br><span class="line">	<span class="string">"name"</span>: <span class="string">"foo"</span>,</span><br><span class="line">	<span class="string">"strict"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>至此，第一步执行完毕，<code>ref = foo_reference</code>。</p>
 <ul>
-<li><p><strong>2 因为是reference, 执行6:</strong></p>
+<li><strong>2 因为是reference, 执行6:</strong></li>
+</ul>
 <blockquote>
 <p>Type(ref) is Reference</p>
 </blockquote>
-</li>
-<li><p><strong>3 因为是Environment Record,执行 6.b:</strong></p>
-</li>
+<ul>
+<li><strong>3 因为是Environment Record,执行 6.b:</strong></li>
 </ul>
 <blockquote>
 <p>Else, the base of ref is an Environment Record<br>Let thisValue be the result of calling the ImplicitThisValue concrete method of GetBase(ref).</p>
@@ -449,21 +449,21 @@
 </blockquote>
 <ol>
 <li>baseReference 等于执行 MemberExpression 在此处为 []左边的语句即 foo 的结果，上一节已经说过了返回一个 reference.</li>
-<li>baseValue 等于 GetValue(baseReference) 。<br> <a href="http://es5.github.io/#x8.7.1" target="_blank" rel="external">8.7.1 GetValue</a><br> （ GetValue属于一个规范中比较重要的方法，此处为节约篇幅，暂时不讲，以后可以单开文章讲解。暂时记住他的结果一般为：如果是reference传入，会返回一个普通类型出来。比如 foo 为reference，通过GetValue之后就是一个普通的 object，也就是 foo 对应的 js 类型本身。）<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">reference_foo_bar = &#123;</span><br><span class="line">	<span class="string">"base"</span>: foo,</span><br><span class="line">	<span class="string">"name"</span>: <span class="string">"bar"</span>,</span><br><span class="line">	<span class="string">"strict"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
+<li>baseValue 等于 GetValue(baseReference) 。<br> <a href="http://es5.github.io/#x8.7.1" target="_blank" rel="external">8.7.1 GetValue</a><br> （ GetValue属于一个规范中比较重要的方法，此处为节约篇幅，暂时不讲，以后可以单开文章讲解。暂时记住他的结果一般为：如果是reference传入，会返回一个普通类型出来。比如 foo 为reference，通过GetValue之后就是一个普通的 object，也就是 foo 对应的 js 类型本身。）</li>
 </ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">reference_foo_bar = &#123;</span><br><span class="line">	<span class="string">"base"</span>: foo,</span><br><span class="line">	<span class="string">"name"</span>: <span class="string">"bar"</span>,</span><br><span class="line">	<span class="string">"strict"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
-<li><p><strong>2 因为是reference, 执行6:</strong></p>
+<li><strong>2 因为是reference, 执行6:</strong></li>
+</ul>
 <blockquote>
 <p>Type(ref) is Reference</p>
 </blockquote>
-</li>
-<li><p><strong>3 因为是属性引用类型,执行 6.a:</strong></p>
+<ul>
+<li><strong>3 因为是属性引用类型,执行 6.a:</strong></li>
+</ul>
 <blockquote>
 <p>If IsPropertyReference(ref) is true, then<br>i.Let thisValue be GetBase(ref).</p>
 </blockquote>
-</li>
-</ul>
 <p><code>GetBase(ref) = reference_foo_bar.base = foo</code>;</p>
 <p>真相大白， <strong>foo.bar() 执行时 this 指向 foo</strong></p>
 <h3 id="如何解释_(f_=_foo-bar)()">如何解释 (f = foo.bar)()</h3><p>这个语句属于罕见写法，在各种经验总结中属于高级技巧，但是通过规范，一样分分钟搞定。</p>
@@ -471,7 +471,11 @@
 <li><strong>1 执行函数调用规范中的第一步：</strong>  </li>
 </ul>
 <blockquote>
-<p>Let ref be the result of evaluating MemberExpression.<br>f = foo.bar 是一个明显的赋值语句，我们查看规范，赋值语句会发生什么：<br>[11.13.1 Simple Assignment ( = )] (<a href="http://es5.github.io/#x11.13.1" target="_blank" rel="external">http://es5.github.io/#x11.13.1</a>)<br>The production AssignmentExpression : LeftHandSideExpression = AssignmentExpression is evaluated as follows:</p>
+<p>Let ref be the result of evaluating MemberExpression.<br>f = foo.bar 是一个明显的赋值语句，我们查看规范，赋值语句会发生什么：</p>
+</blockquote>
+<p>[11.13.1 Simple Assignment ( = )] (<a href="http://es5.github.io/#x11.13.1" target="_blank" rel="external">http://es5.github.io/#x11.13.1</a>)</p>
+<blockquote>
+<p>The production AssignmentExpression : LeftHandSideExpression = AssignmentExpression is evaluated as follows:</p>
 <ol>
 <li>Let rref be the result of evaluating AssignmentExpression.</li>
 <li>Let rval be GetValue(rref)</li>
@@ -480,13 +484,13 @@
 </blockquote>
 <p>可以看出简单赋值语句返回的是对等于号右边进行GetValue之后的结果，上一节讲了，执行过GetValue就会返回js的类型，此处会返回 foo.bar 也就是一个 [Object Function] 类型。</p>
 <ul>
-<li><p><strong>2 ref不是reference，执行7</strong></p>
+<li><strong>2 ref不是reference，执行7</strong></li>
+</ul>
 <blockquote>
 <p>7.Else, Type(ref) is not Reference.<br>a.    Let thisValue be undefined.</p>
 </blockquote>
-</li>
-<li><p><strong>3 thisValue = undefined</strong><br>同理：</p>
-<blockquote>
+<ul>
+<li><strong>3 thisValue = undefined</strong><br>同理：<blockquote>
 <p>Else if thisArg is null or undefined, set the ThisBinding to the global object.</p>
 </blockquote>
 </li>
