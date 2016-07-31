@@ -91,7 +91,7 @@
 <meta property="og:site_name" content="leon的后花园">
 <meta property="og:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
 <meta property="og:image" content="http://liyangready.github.io/./1.jpg">
-<meta property="og:updated_time" content="2016-07-31T09:19:54.000Z">
+<meta property="og:updated_time" content="2016-07-31T09:20:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="根治JavaScript中的this-ECMAScript规范解读">
 <meta name="twitter:description" content="前言this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：Javascript的this用法 、深入理解JavaScript中的this关键字 、你不知道的this 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同江湖郎中一般，都没有从根本上解释现象出现的">
@@ -353,7 +353,8 @@
       
 
       
-        <h2 id="前言">前言</h2><p>this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：<em>Javascript的this用法</em> 、<em>深入理解JavaScript中的this关键字</em> 、<em>你不知道的this</em> 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同<strong>江湖郎中</strong>一般，都没有从根本上解释现象出现的原因，这就导致每次有了关于this的题层出不穷，因为经验总结只是教会了你现有的场景，而没有教会你如何解释新的场景。<br>老司机都知道，发展到今天，有规范在，有源码在，早已经不是IE6时代，还需要总结使用经验场景也太不科学了。最近又在网上刷到关于this的讨论，正巧在规范中追寻过this的秘密，在这里分享一下个人经验。<br><small>*以下规范均引用ES5</small></p>
+        <h2 id="前言">前言</h2><p>this是JavaScript中的著名月经题，每隔一段时间就有人翻出了拿各种奇怪的问题出来讨论，每次都会引发一堆口水之争。从搜索引擎搜了一下现在的比较热门的关于this的用法，如：<em>Javascript的this用法</em> 、<em>深入理解JavaScript中的this关键字</em> 、<em>你不知道的this</em> 等文章几乎都是从现象出发，总结this在不同场景下的指向结果，如同<strong>江湖郎中</strong>一般，都没有从根本上解释现象出现的原因，这就导致每次有了关于this的题层出不穷，因为经验总结只是教会了你现有的场景，而没有教会你如何解释新的场景。  </p>
+<p>老司机都知道，发展到今天，有规范在，有源码在，早已经不是IE6时代，还需要总结使用经验场景也太不科学了。最近又在网上刷到关于this的讨论，正巧在规范中追寻过this的秘密，在这里分享一下个人经验。<br><small>*以下规范均引用ES5</small></p>
 <a id="more"></a>
 <h2 id="理论篇">理论篇</h2><p>规范中之处ECMAScript有三种可执行代码：</p>
 <ul>
