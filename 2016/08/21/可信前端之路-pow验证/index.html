@@ -98,7 +98,8 @@
 <meta property="og:image" content="http://liyangready.github.io/media/14638180574042/14641854501912.jpg">
 <meta property="og:image" content="http://liyangready.github.io/media/14638180574042/14641838317813.jpg">
 <meta property="og:image" content="http://liyangready.github.io/media/14638180574042/14641894530874.jpg">
-<meta property="og:updated_time" content="2016-08-21T12:15:42.000Z">
+<meta property="og:image" content="http://liyangready.github.io/media/14638180574042/14641897989894.jpg">
+<meta property="og:updated_time" content="2016-08-21T12:20:42.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="可信前端之路-pow工作量证明">
 <meta name="twitter:description" content="0x00 前言在我们的上一篇文章《可信前端之路-代码保护》 中，我们提到了希望打造一个web可信系统（Trusted system），通过代码保护来提高前端环境的安全性，今天，我们从另一个完全不同的角度继续探讨如何打造可信前端之路。
@@ -415,57 +416,35 @@
 </li>
 <li><p><strong>Challenge-response</strong><br>  <em>Challenge-response</em>（挑战-响应）模式主要被应用在web系统中，此模式和<em>Solution-verification</em> 相比最大的区别就是在于问题和答案范围是由验证者分配的。这种模式就类似于考试的时候老师出了题目同时给划了重点，这样学生的工作量是在一个可控的范围内的，这样控制了学生的复习时间，去掉了很多无用功。如下图所示：  </p>
 <p>  <img src="media/14638180574042/14641838317813.jpg" alt=""></p>
+<p>  我们可以基于<em>Challenge-response</em>设计一套适用于web系统的HashCash模型。利用web系统实时交互的特点，不再是工作者自寻问题和答案，<strong>改为每次从验证者动态获取问题和答案</strong>，有效的控制工作难度和防止被提前运算。</p>
+<ul>
+<li><p><strong>适用于web系统的HashCash实现</strong></p>
+<p>  在这个HashCash模型中，大概流程如下：<br>  1 前端发起请求，获取题目。<br>  2 后端生成一个<strong>唯一且固定长度</strong>的随机字符串作为题目Q，根据<strong>用户风险程度</strong>选择一个难度L，返回给前端，同时将题目<strong>缓存</strong>起来。<br>  3 前端生成一个<strong>固定长度</strong>的随机字符串R，设置答案 A=0。<br>  4 前端尝试寻找答案</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(Hash(Q+R+A).subString(L) != repeate(<span class="number">0</span>, L)) &#123;</span><br><span class="line">	A++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  5 前端提交Q, A。<br>  6 后端从缓存中查找Q以及对应的L，如果存在，验证<code>Hash(Q+R+A).subString(L) == repeate(0, L)</code>是否成立，成立返回成功并且删除缓存中的题目。如果题目不存在或者等式不成立，返回错误。<br><img src="media/14638180574042/14641894530874.jpg" alt=""><br>  上述模型和<em>Solution-verification</em>中的HashCash模型相比，可以针对不同的用户不同的场景选取不同的题目和题目难度，同时对于一个已知的题目来说，由于单次hash函数执行时间是固定的，所以平均解题时间是可以预期的，更适合对用户体验更敏感的web系统。</p>
+</li>
+<li><p><strong>前端优化</strong><br>  pow从提出至今已经有10多年，在web系统中的应用一直不温不火。近两年被重新聚焦，包括开始有专注于提供web端pow验证码的服务商 hashcash.io，一个很大的原因就是浏览器性能的提升。<br>  <strong>1.web worker</strong><br>  我们都知道JavaScript是单线程，意味着同时只能执行一个操作任务。而一次pow验证起到真正的效果往往需要设置题目难度到百万次的计算，对于传统浏览器来说，会导致页面的”假死”，这对用户体验是非常大的伤害。<br>  随着现代浏览器的发展，多线程(web worker) 成了标配，再也不需要过多的担心这个问题。前端完全可以实现在进行正常操作的同时，另起一个线程进行pow运算，正常用户停留页面时间对于一次pow运算来说是足够的，所以用户体验不会受到太大的影响。<br>  而老式浏览器占比越来越小，我们可以降级为flash处理多线程。当然如果flash也不支持，这部分用户只能在提交表单的时候等待一定时间了。不过目前已经越来越多的网站开始放弃老版本ie浏览器，加上微软强制推送的更新，这部分用户在不久的时间内就会升级浏览器，享受到正常用户的体验，不至于成为我们放弃pow的理由。</p>
+<p>  <strong>2.asm.js</strong><br>  Javascript对于cpu密集型计算的缺陷也一直是让人不敢启用pow的原因，随着asm.js的出现，这个问题得以大幅度改善。asm.js是一个JavaScript的一个严格的子集，可以被用来作为一个底层的、高效的编译器目标语言。asm.js的性能直逼原生码，加上v8强悍的性能，计算能力不再是短板。对于大部分使用现代浏览器的用户来说，直接上asm.js可以让他们得到更好的体验。下图为asm和native对一些消耗性能类库的执行情况。</p>
+<p>  <img src="media/14638180574042/14641897989894.jpg" alt=""></p>
+</li>
+<li><p><strong>缺陷</strong><br>对于一个小型web应用来说，改进后的HashCash能够很好的满足需求，然而对于大型的web应用来说，还有几个需要考虑的缺陷：<br>1 计算时间无法精确控制。虽然上文论证过，我们的HashCash算法中的hash次数是能够算出平均执行次数的，但是具体的执行时间还是有一定的随机性。有可能会小概率出现计算较长不能出结果的情况。<br>2 由于HashCash本身是一个穷举的过程，所以攻击者可以利用多线程并发求解，甚至引用GPU来解题，这样可以降低自身成本。</p>
+</li>
+<li><p><strong>改进方案</strong><br>  1 <strong>串行hash</strong><br>  上述缺陷和HashCash算法本身有关系，如果要彻底解决需要对算法做一定的改善。对此国内安全研究者 EtherDream 在<a href="http://www.cnblogs.com/index-html/p/web-pow-research.html" target="_blank" rel="external">文章</a>中也提到，可以使用<strong>串行加密</strong>和<strong>题库</strong>的方式来解决时间和并发求解的问题。</p>
+<blockquote>
+<pre><code>如果每次计算都依赖上次结果，就无法并行了。例如 slowhash：
+</code></pre><p>for i = 0 to 1000000000</p>
+<pre><code>x = hash<span class="list">(<span class="keyword">x</span>)</span>
+end
+</code></pre><p>这种串行的计算，自然是无法拆分的。</p>
+</blockquote>
+<p>  串行加密即将普通hash穷举寻解的过程改为多次hash，比如 SHA1(SHA1(SHA1…(xxx))) 的模式，每次加密之后的结果作为下次运算的明文继续加密。</p>
+<p>  这种模式其实由于本身不遵循pow简单易于验证的特点，所以需要通过题库的方式来验证问题。即服务器提前按照相同的方案跑出N个问题并且知晓答案保存下来，再交给浏览器去运算，以实现快速验证的可能。</p>
+<p>  然而此方案已经脱离了POW的核心思想，题库的组建和维护也需要一定的成本，有没有一种更优雅的解决方案呢？可以考虑下time-lock算法。<br>  2 <strong>time-lock算法</strong><br>  time-lock算法和RSA算法类似，都利用了大素数无法快速分解的原理，相比于多次hash，其加密流程更可控也更优雅。而后端由于知道了两个素数因子，可以有快捷方式进行校验，不需要提前准备题库，恰到好处的解决了上述问题。<br>  限于篇幅，不在此展开算法细节，如果大家感兴趣，可以在下一篇文章中对time-lock算法进行详细的说明和推导。</p>
 </li>
 </ul>
-<pre><code>我们可以基于<span class="keyword">*</span>Challenge-response<span class="keyword">*</span>设计一套适用于web系统的HashCash模型。利用web系统实时交互的特点，不再是工作者自寻问题和答案，<span class="keyword">*</span><span class="keyword">*</span>改为每次从验证者动态获取问题和答案<span class="keyword">*</span><span class="keyword">*</span>，有效的控制工作难度和防止被提前运算。
-
-- <span class="keyword">*</span><span class="keyword">*</span>适用于web系统的HashCash实现<span class="keyword">*</span><span class="keyword">*</span>
-
-    在这个HashCash模型中，大概流程如下：
-    1 前端发起请求，获取题目。
-    2 后端生成一个<span class="keyword">*</span><span class="keyword">*</span>唯一且固定长度<span class="keyword">*</span><span class="keyword">*</span>的随机字符串作为题目Q，根据<span class="keyword">*</span><span class="keyword">*</span>用户风险程度<span class="keyword">*</span><span class="keyword">*</span>选择一个难度L，返回给前端，同时将题目<span class="keyword">*</span><span class="keyword">*</span>缓存<span class="keyword">*</span><span class="keyword">*</span>起来。
-    3 前端生成一个<span class="keyword">*</span><span class="keyword">*</span>固定长度<span class="keyword">*</span><span class="keyword">*</span>的随机字符串R，设置答案 A=0。
-    4 前端尝试寻找答案
-    <span class="variable"><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(Hash(Q+R+A).subString(L) != repeate(<span class="number">0</span>, L)) &#123;</span><br><span class="line">	A++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></span>
-
-    5 前端提交Q, A。
-    6 后端从缓存中查找Q以及对应的L，如果存在，验证`Hash(Q+R+A).subString(L) == repeate(0, L)`是否成立，成立返回成功并且删除缓存中的题目。如果题目不存在或者等式不成立，返回错误。
-</code></pre><p><img src="media/14638180574042/14641894530874.jpg" alt=""></p>
-<pre><code>    上述模型和<span class="keyword">*</span>Solution-verification<span class="keyword">*</span>中的HashCash模型相比，可以针对不同的用户不同的场景选取不同的题目和题目难度，同时对于一个已知的题目来说，由于单次hash函数执行时间是固定的，所以平均解题时间是可以预期的，更适合对用户体验更敏感的web系统。
-
-- <span class="keyword">*</span><span class="keyword">*</span>前端优化<span class="keyword">*</span><span class="keyword">*</span>
-    pow从提出至今已经有10多年，在web系统中的应用一直不温不火。近两年被重新聚焦，包括开始有专注于提供web端pow验证码的服务商 hashcash.io，一个很大的原因就是浏览器性能的提升。
-    <span class="keyword">*</span><span class="keyword">*</span>1.web worker<span class="keyword">*</span><span class="keyword">*</span>
-    我们都知道JavaScript是单线程，意味着同时只能执行一个操作任务。而一次pow验证起到真正的效果往往需要设置题目难度到百万次的计算，对于传统浏览器来说，会导致页面的<span class="string">"假死"</span>，这对用户体验是非常大的伤害。  
-    随着现代浏览器的发展，多线程(web worker) 成了标配，再也不需要过多的担心这个问题。前端完全可以实现在进行正常操作的同时，另起一个线程进行pow运算，正常用户停留页面时间对于一次pow运算来说是足够的，所以用户体验不会受到太大的影响。  
-    而老式浏览器占比越来越小，我们可以降级为flash处理多线程。当然如果flash也不支持，这部分用户只能在提交表单的时候等待一定时间了。不过目前已经越来越多的网站开始放弃老版本ie浏览器，加上微软强制推送的更新，这部分用户在不久的时间内就会升级浏览器，享受到正常用户的体验，不至于成为我们放弃pow的理由。
-
-    <span class="keyword">*</span><span class="keyword">*</span>2.asm.js<span class="keyword">*</span><span class="keyword">*</span>
-    Javascript对于cpu密集型计算的缺陷也一直是让人不敢启用pow的原因，随着asm.js的出现，这个问题得以大幅度改善。asm.js是一个JavaScript的一个严格的子集，可以被用来作为一个底层的、高效的编译器目标语言。asm.js的性能直逼原生码，加上v8强悍的性能，计算能力不再是短板。对于大部分使用现代浏览器的用户来说，直接上asm.js可以让他们得到更好的体验。下图为asm和native对一些消耗性能类库的执行情况。
-
-    ![](media/14638180574042/14641897989894.jpg)
-
-- <span class="keyword">*</span><span class="keyword">*</span>缺陷<span class="keyword">*</span><span class="keyword">*</span>
-对于一个小型web应用来说，改进后的HashCash能够很好的满足需求，然而对于大型的web应用来说，还有几个需要考虑的缺陷：
-1 计算时间无法精确控制。虽然上文论证过，我们的HashCash算法中的hash次数是能够算出平均执行次数的，但是具体的执行时间还是有一定的随机性。有可能会小概率出现计算较长不能出结果的情况。
-2 由于HashCash本身是一个穷举的过程，所以攻击者可以利用多线程并发求解，甚至引用GPU来解题，这样可以降低自身成本。
-
-- <span class="keyword">*</span><span class="keyword">*</span>改进方案<span class="keyword">*</span><span class="keyword">*</span>
-    1 <span class="keyword">*</span><span class="keyword">*</span>串行hash<span class="keyword">*</span><span class="keyword">*</span>
-    上述缺陷和HashCash算法本身有关系，如果要彻底解决需要对算法做一定的改善。对此国内安全研究者 EtherDream 在[文章](http://www.cnblogs.com/index-html/p/web-pow-research.html)中也提到，可以使用<span class="keyword">*</span><span class="keyword">*</span>串行加密<span class="keyword">*</span><span class="keyword">*</span>和<span class="keyword">*</span><span class="keyword">*</span>题库<span class="keyword">*</span><span class="keyword">*</span>的方式来解决时间和并发求解的问题。
-</code></pre><blockquote>
-<pre><code>如果每次计算都依赖上次结果，就无法并行了。例如 slowhash：
-</code></pre><p>for i = 0 to 1000000000<br>       x = hash(x)<br>       end<br>这种串行的计算，自然是无法拆分的。</p>
-</blockquote>
-<pre><code>串行加密即将普通hash穷举寻解的过程改为多次hash，比如 SHA1(SHA1(SHA1...(xxx))) 的模式，每次加密之后的结果作为下次运算的明文继续加密。
-
-这种模式其实由于本身不遵循pow简单易于验证的特点，所以需要通过题库的方式来验证问题。即服务器提前按照相同的方案跑出N个问题并且知晓答案保存下来，再交给浏览器去运算，以实现快速验证的可能。
-
-然而此方案已经脱离了POW的核心思想，题库的组建和维护也需要一定的成本，有没有一种更优雅的解决方案呢？可以考虑下<span class="built_in">time</span>-<span class="built_in">lock</span>算法。
-<span class="number">2</span> **<span class="built_in">time</span>-<span class="built_in">lock</span>算法**
-<span class="built_in">time</span>-<span class="built_in">lock</span>算法和RSA算法类似，都利用了大素数无法快速分解的原理，相比于多次hash，其加密流程更可控也更优雅。而后端由于知道了两个素数因子，可以有快捷方式进行校验，不需要提前准备题库，恰到好处的解决了上述问题。
-限于篇幅，不在此展开算法细节，如果大家感兴趣，可以在下一篇文章中对<span class="built_in">time</span>-<span class="built_in">lock</span>算法进行详细的说明和推导。
-</code></pre><h2 id="0x04_总结">0x04 总结</h2><ul>
+</li>
+</ul>
+<h2 id="0x04_总结">0x04 总结</h2><ul>
 <li>前端采集数据不可信和企业对可信用户的需求形成了矛盾。</li>
 <li>随着浏览器性能的提升，pow认证方式可被移植到web系统。</li>
 <li>pow大致分为<em>Solution-verification</em> 和<em>Challenge-response</em>两种类型。</li>
