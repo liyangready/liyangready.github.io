@@ -87,7 +87,7 @@
 <meta name="description" content="不谈兴趣，不谈情怀，计算机就是我的职业，像一个专业的人去思考，去coding">
 <meta property="og:type" content="website">
 <meta property="og:title" content="leon的后花园">
-<meta property="og:url" content="http://liyangready.github.io/tags/前端工程/index.html">
+<meta property="og:url" content="http://liyangready.github.io/page/6/index.html">
 <meta property="og:site_name" content="leon的后花园">
 <meta property="og:description" content="不谈兴趣，不谈情怀，计算机就是我的职业，像一个专业的人去思考，去coding">
 <meta name="twitter:card" content="summary">
@@ -113,9 +113,9 @@
 
 
 
-  <link rel="canonical" href="http://liyangready.github.io/tags/前端工程/"/>
+  <link rel="canonical" href="http://liyangready.github.io/page/6/"/>
 
-  <title> 标签: 前端工程 | leon的后花园 </title>
+  <title> leon的后花园 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -146,7 +146,9 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  ">
+  <div class="container one-collumn sidebar-position-left 
+   page-home 
+ ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -263,47 +265,140 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2 >
-        前端工程
-        <small>标签</small>
-      </h2>
-    </div>
-
+  <section id="posts" class="posts-expand">
     
       
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
 
-      <h1 class="post-title">
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2015/03/17/前端工程构建之gulp/" itemprop="url">
-              
-                <span itemprop="name">前端工程构建之gulp</span>
-              
-            </a>
         
-      </h1>
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/10/30/zepto-源码/" itemprop="url">
+                  zepto 源码
+                </a>
+              
+            
+          </h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2015-03-17T18:03:11+08:00"
-              content="2015-03-17" >
-          03-17
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2014-10-30T15:08:55+08:00" content="2014-10-30">
+              2014-10-30
+            </time>
+          </span>
 
-    </header>
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/10/30/zepto-源码/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/10/30/zepto-源码/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>$ = Zepto;<br>$是一个方法，方法上面可以挂很多私有属性，比如 ajax这种，这些私有属性可以通过 $.xxx 使用，对应zepto对象 $().xx不可访问。<br>$() 会执行 $.zepto.init 方法，这个方法返回的是 $.zepto.Z() , 而Z是zepto的一个私有构造函数， Z() 就能返回一个实例，也就是 zepto实例，所以$() 会返回不同的Z实例。实例上面也有方法，共享的方法当然是挂在Z.prototype上面，<code>zepto.Z.prototype = Z.prototype = $.fn</code> 可以看出来，操作 $.fn其实就是操作 Z的prototype。可以通过它来拓展 zepto。  </p>
+<p>zepto的选择器由于不用兼容ie6，多半采用的是dom level3的querySelectorAll， 除了对 id和tag选择器做了优化直接使用 getElementById 和 getElementsByTagName。  </p>
+<p>zepto事件，delegate、live等都是on的语法糖，on方法主要在 zepto.event里面的 add方法中，其中会包裹下回调方法，如果是dom节点，会直接调用addEventListener来绑定事件，比如使用return false可以直接实现 <code>e.preventDefault(), e.stopPropagation()</code>等，还会模拟mouseenter和mouseleave，同时会把element和事件回调缓存起来。<br>trigger，如果是element，有新的 <code>dispatchEvent</code> 方法，zepto会模拟一个event对象，然后触发事件，否则就会去之前缓存的 handler中找对应的事件来触发。</p>
+<p>zepto ajax没啥说的，主要是 <code>if ((xhr.status &gt;= 200 &amp;&amp; xhr.status &lt; 300) || xhr.status == 304 || (xhr.status == 0 &amp;&amp; protocol == &#39;file:&#39;)) {</code>判断成功的方法是这些。然后就是对于jsonp的eval，这么使用的 <code>if (dataType == &#39;script&#39;)    (1,eval)(result)</code> 为什么要这么用，有一个参考链接介绍全局 eval和innter eval的区别<br><a href="http://perfectionkills.com/global-eval-what-are-the-options/" target="_blank" rel="external">http://perfectionkills.com/global-eval-what-are-the-options/</a></p>
+<p>zepto touch,通过 touchstart touchend 和touchmove来模拟一些事件， &gt;750ms longTap， 还有tap、swipe等。</p>
+<p>zepto animate主要通过transition和css3 animation来实现</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
   </article>
 
 
     
-  </div>
+  </section>
 
   
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+  </nav>
+
 
 
           </div>

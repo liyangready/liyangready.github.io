@@ -288,6 +288,153 @@
             
               
                 
+                <a class="post-title-link" href="/2015/08/07/dom兼容性问题收集/" itemprop="url">
+                  dom兼容性问题收集
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-08-07T16:26:01+08:00" content="2015-08-07">
+              2015-08-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/08/07/dom兼容性问题收集/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/08/07/dom兼容性问题收集/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="位置相关">位置相关</h2><ul>
+<li>页面滚动距离（scrollTop/scrollLeft）：</li>
+</ul>
+<p>IE9+ &amp; WEBKIT: <code>window.pageYOffset == window.scrollY;</code><br>兼容写法 : </p>
+<pre>
+var supportPageOffset = window.pageXOffset !== undefined;
+var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
+var x = supportPageOffset ? window.pageXOffset : isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft;
+var y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+</pre>
+`document.compatMode`表示是否是标准文档模式。
+
++ 窗口大小
+
+IE9+ & webkit:  `window.innerHeight`表示浏览器网页部分可视区域高度。`window.outerHeight`表示浏览器高度。
+
+兼容写法： 
+<pre>
+var h = window.innerHeight
+|| document.documentElement.clientHeight
+|| document.body.clientHeight;
+</pre>
+
+<p>window.outerHeight 一般来说等于 <code>window.screen.availHeight</code><br>包含了浏览器工具条的高度，而<code>window.screen.height</code>是指屏幕的高度。</p>
+<ul>
+<li>各种高度</li>
+</ul>
+<p>一篇详细的测试文章： <a href="http://blog.csdn.net/woxueliuyun/article/details/8638427" target="_blank" rel="external">offsetHeight, clientHeight与scrollHeight的区别</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2015/07/26/构建一个支持https的透明代理/" itemprop="url">
                   构建一个支持https的透明代理
                 </a>
@@ -779,180 +926,11 @@ foo();
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/04/16/fe知识储备/" itemprop="url">
-                  fe知识储备
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-04-16T10:40:40+08:00" content="2015-04-16">
-              2015-04-16
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/前端/" itemprop="url" rel="index">
-                    <span itemprop="name">前端</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/04/16/fe知识储备/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/04/16/fe知识储备/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <ul>
-<li>基础类<ul>
-<li>dom操作</li>
-</ul>
-</li>
-<li>规范类<ul>
-<li>ECMAscript规范</li>
-<li>w3c规范</li>
-</ul>
-</li>
-<li>浏览器兼容性<ul>
-<li>javascript兼容性</li>
-<li>css兼容性</li>
-<li>移动端兼容性</li>
-</ul>
-</li>
-<li>bug/坑的收集</li>
-<li>拥抱新趋势<ul>
-<li>ES5常用方法</li>
-<li>ES6新特性</li>
-<li>hybrid</li>
-<li>HTML5 &amp;&amp; CSS3</li>
-<li>react等</li>
-</ul>
-</li>
-<li>前端工程化<ul>
-<li>yomen 等 </li>
-</ul>
-</li>
-<li>前端模块化<ul>
-<li>AMD/CMD/UMD</li>
-</ul>
-</li>
-<li>前端模式<ul>
-<li>设计模式</li>
-<li>MVC模式</li>
-<li>MVVM</li>
-</ul>
-</li>
-<li>值得看的源码<ul>
-<li>uglify</li>
-<li>jquery</li>
-</ul>
-</li>
-<li>后端<ul>
-<li>Python</li>
-<li>node</li>
-</ul>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -993,7 +971,7 @@ foo();
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">25</span>
+              <span class="site-state-item-count">26</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1001,7 +979,7 @@ foo();
           
             <div class="site-state-item site-state-categories">
               
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               
             </div>
@@ -1010,7 +988,7 @@ foo();
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
