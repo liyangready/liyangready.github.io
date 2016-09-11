@@ -288,6 +288,132 @@
             
               
                 
+                <a class="post-title-link" href="/2015/03/29/jQuery源码系列（二）/" itemprop="url">
+                  jQuery源码系列（二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-03-29T22:57:42+08:00" content="2015-03-29">
+              2015-03-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/03/29/jQuery源码系列（二）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/03/29/jQuery源码系列（二）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>#event.js</p>
+<ul>
+<li>jq的事件处理核心都在<strong>on</strong>方法上面，无论你通过$(“#xxx”).click(); 或者通过bind/delegate/one 最后都是调用这个on方法。<br>##on</li>
+<li>on方法处理了一大堆参数，形成语法糖，和业务太挂钩我们就不细看了，可以看到它最后会调用<br><pre><br>return this.each( function() {<pre><code><span class="label">jQuery.event.add</span>( this, types, <span class="preprocessor">fn</span>, <span class="preprocessor">data</span>, <span class="keyword">selector </span>)<span class="comment">;</span>
+</code></pre>});<br></pre>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/03/29/jQuery源码系列（二）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2015/03/29/把书看薄-javascript模式-设计模式/" itemprop="url">
                   把书看薄-javascript模式-设计模式
                 </a>
@@ -780,130 +906,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/03/10/写在初始的话/" itemprop="url">
-                  写在初始的话
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-03-10T18:41:18+08:00" content="2015-03-10">
-              2015-03-10
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/思考/" itemprop="url" rel="index">
-                    <span itemprop="name">思考</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/03/10/写在初始的话/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/03/10/写在初始的话/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>#关于blog<br>该blog是纯静态的页面，挂载在github pages上面的，为什么要采用这样的方式以及如何搭建一个这样的博客可以参看<a href="http://cnfeat.com/2014/05/10/2014-05-11-how-to-build-a-blog/">如何搭建一个独立博客</a>，对于我个人而言，可能更多的是<strong>懒</strong>，其实我在阿里云买了服务器闲置了你敢信。。。，这种静态的blog可以省去我很多时间，而且一个简单的blog的确是不需要动态服务器的，我想的是实在需要可以用我的阿里云服务器提供api，交给js去实现动态就行了~~~</p>
-<p>#关于网站风格<br>网站是由<a href="http://hexo.io/">hexo</a> 快速搭建起来的，为什么没用jetty，因为hexo是node项目，对于热爱前端的我来说才是真爱。主题是我基于<a href="https://github.com/iissnan/hexo-theme-next">next</a> 修改的。（等修改完善了我会将自己的分支放出来）</p>
-<p>#我的个人看法<br>其实要搭一个个人站起先我是拒绝的，因为简单的网站搭建早就折腾过，并不能带来多少经验的积累，而平时生活和学习的记录大都是放在印象笔记或者以前的csdn上面，一直觉得没必要公开，而我身边折腾个人站的童鞋大部分都是为了<strong>应付面试</strong>和<strong>装13</strong>用，我是非常反感的，至少从我的经历来看，大部分东西写给自己看看就行了，放出来丢人吗？<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/03/10/写在初始的话/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -949,7 +951,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">27</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
